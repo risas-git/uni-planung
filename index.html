@@ -23,23 +23,26 @@
           </div>
         </div>
         <div class="header-actions">
-          <button id="resetBtn" class="btn btn-sm" title="Fortschritt zurücksetzen">Zurücksetzen</button>
+          <button id="resetBtn" class="btn btn-sm" title="Gesamten Fortschritt zurücksetzen">Zurücksetzen</button>
         </div>
       </div>
 
-      <!-- Progress Summary -->
-      <div class="summary-box">
-        <div class="summary-labels">
-          <span>Pflichtbereich Fortschritt: <strong id="progressPercentText">0%</strong></span>
-          <span><strong id="completedLpText">0</strong> von <span id="totalLpText">120</span> LP abgeschlossen</span>
+      <!-- Key Metrics & Average Grade Summary -->
+      <div class="metrics-summary-bar">
+        <div class="metric-stat-block">
+          <div class="metric-stat-label">Notendurchschnitt (gewichtet)</div>
+          <div id="averageGradeDisplay" class="metric-stat-value highlight-grade">-</div>
+          <div id="gradedLpSubtext" class="metric-stat-subtext">0 LP benotet eingebracht</div>
         </div>
-        <div class="progress-track">
-          <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+        <div class="metric-stat-block">
+          <div class="metric-stat-label">Abgeschlossene Leistungspunkte</div>
+          <div class="metric-stat-value"><span id="completedLpText">0</span> <span style="font-size: 0.95rem; font-weight: normal; color: var(--text-muted);">/ 120 LP</span></div>
+          <div id="completedModulesSubtext" class="metric-stat-subtext">0 von 22 Pflichtmodulen</div>
         </div>
-        <div class="summary-stats">
-          <div class="stat-item">Abgeschlossen: <strong id="statCompletedCount">0</strong> Module (<strong id="statCompletedLp">0</strong> LP)</div>
-          <div class="stat-item">Noch offen: <strong id="statOpenCount">22</strong> Module (<strong id="statOpenLp">120</strong> LP)</div>
-          <div class="stat-item">Pflichtbereich Gesamt: <strong>22 Module</strong> (120 LP)</div>
+        <div class="metric-stat-block">
+          <div class="metric-stat-label">Noch offene Module</div>
+          <div class="metric-stat-value"><span id="openLpText">120</span> <span style="font-size: 0.95rem; font-weight: normal; color: var(--text-muted);">LP offen</span></div>
+          <div id="openModulesSubtext" class="metric-stat-subtext">22 Pflichtmodule ausstehend</div>
         </div>
       </div>
     </header>
@@ -63,13 +66,14 @@
 
     <!-- Legend -->
     <footer class="legend-section" style="margin-top: 24px;">
-      <div class="legend-title">Legende & Hinweise</div>
+      <div class="legend-title">Legende & Berechnungshinweise</div>
       <div class="legend-list">
-        <div><strong>LP:</strong> Leistungspunkte (ECTS)</div>
-        <div><strong>Empf. Beginn:</strong> Fachsemester laut Studienverlaufsplan</div>
+        <div><strong>LP:</strong> Leistungspunkte (ECTS-Punkte)</div>
+        <div><strong>Empf. Beginn:</strong> Fachsemester laut Verlaufsplan</div>
         <div><strong>SL:</strong> Anzahl unbenotete Studienleistungen</div>
         <div><strong>bPr:</strong> Anzahl benotete Modulprüfungen</div>
         <div><strong>uPr:</strong> Anzahl unbenotete Modulprüfungen</div>
+        <div><strong>Note:</strong> Notenwert (1,0 - 4,0). Der Notendurchschnitt wird mit den LP der benoteten Module gewichtet.</div>
       </div>
     </footer>
 
