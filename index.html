@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studienplaner | KI & Kognitive Informatik (B.Sc.) - Universität Bielefeld</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="header-top">
+        <div>
+          <div class="university-label">Universität Bielefeld &bull; Technische Fakultät</div>
+          <h1 class="degree-title">Künstliche Intelligenz und Kognitive Informatik</h1>
+          <div class="degree-subtitle">
+            Bachelor of Science: 1-Fach (fw) &bull; 
+            <a href="https://ekvv.uni-bielefeld.de/sinfo/publ/variante/405818172?m#405818181" target="_blank" rel="noopener noreferrer">
+              Offizielle Studieninformation (EkVV)
+            </a>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="resetBtn" class="btn btn-sm" title="Fortschritt zurücksetzen">Zurücksetzen</button>
+        </div>
+      </div>
+
+      <!-- Progress Summary -->
+      <div class="summary-box">
+        <div class="summary-labels">
+          <span>Pflichtbereich Fortschritt: <strong id="progressPercentText">0%</strong></span>
+          <span><strong id="completedLpText">0</strong> von <span id="totalLpText">120</span> LP abgeschlossen</span>
+        </div>
+        <div class="progress-track">
+          <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+        </div>
+        <div class="summary-stats">
+          <div class="stat-item">Abgeschlossen: <strong id="statCompletedCount">0</strong> Module (<strong id="statCompletedLp">0</strong> LP)</div>
+          <div class="stat-item">Noch offen: <strong id="statOpenCount">22</strong> Module (<strong id="statOpenLp">120</strong> LP)</div>
+          <div class="stat-item">Pflichtbereich Gesamt: <strong>22 Module</strong> (120 LP)</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Toolbar: Search & Filters -->
+    <section class="toolbar">
+      <div class="search-box">
+        <input type="text" id="searchInput" class="search-input" placeholder="Modul suchen (z.B. Mathematik, 39-Inf-ML, Programmierung)...">
+      </div>
+      <div class="filter-buttons">
+        <button class="btn btn-sm active" data-filter="all">Alle anzeigen</button>
+        <button class="btn btn-sm" data-filter="open">Nur offene</button>
+        <button class="btn btn-sm" data-filter="completed">Nur erledigte</button>
+      </div>
+    </section>
+
+    <!-- Semester Sections Container -->
+    <main id="semestersContainer">
+      <!-- Generated dynamically by app.js -->
+    </main>
+
+    <!-- Legend -->
+    <footer class="legend-section" style="margin-top: 24px;">
+      <div class="legend-title">Legende & Hinweise</div>
+      <div class="legend-list">
+        <div><strong>LP:</strong> Leistungspunkte (ECTS)</div>
+        <div><strong>Empf. Beginn:</strong> Fachsemester laut Studienverlaufsplan</div>
+        <div><strong>SL:</strong> Anzahl unbenotete Studienleistungen</div>
+        <div><strong>bPr:</strong> Anzahl benotete Modulprüfungen</div>
+        <div><strong>uPr:</strong> Anzahl unbenotete Modulprüfungen</div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="courses-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
