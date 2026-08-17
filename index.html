@@ -23,7 +23,7 @@
           </div>
         </div>
         <div class="header-actions">
-          <button id="resetBtn" class="btn btn-sm" title="Gesamten Fortschritt zurücksetzen">Zurücksetzen</button>
+          <button id="resetBtn" class="btn btn-sm" title="Eingaben im aktuellen Tab zurücksetzen">Zurücksetzen</button>
         </div>
       </div>
 
@@ -47,18 +47,6 @@
       </div>
     </header>
 
-    <!-- Toolbar: Search & Filters -->
-    <section class="toolbar">
-      <div class="search-box">
-        <input type="text" id="searchInput" class="search-input" placeholder="Modul suchen (z.B. Mathematik, 39-Inf-ML, Programmierung)...">
-      </div>
-      <div class="filter-buttons">
-        <button class="btn btn-sm active" data-filter="all">Alle anzeigen</button>
-        <button class="btn btn-sm" data-filter="open">Nur offene</button>
-        <button class="btn btn-sm" data-filter="completed">Nur erledigte</button>
-      </div>
-    </section>
-
     <!-- Semester Sections Container -->
     <main id="semestersContainer">
       <!-- Generated dynamically by app.js -->
@@ -73,7 +61,7 @@
         <div><strong>SL:</strong> Anzahl unbenotete Studienleistungen</div>
         <div><strong>bPr:</strong> Anzahl benotete Modulprüfungen</div>
         <div><strong>uPr:</strong> Anzahl unbenotete Modulprüfungen</div>
-        <div><strong>Note:</strong> Notenwert (1,0 - 4,0). Der Notendurchschnitt wird mit den LP der benoteten Module gewichtet.</div>
+        <div><strong>Note:</strong> Notenwert (1,0 - 4,0). Der Notendurchschnitt wird mit den LP der benoteten Module gewichtet. Keine Speicherung im Browser.</div>
       </div>
     </footer>
 

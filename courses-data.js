@@ -18,8 +18,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "-",
         uPr: "1",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/26796159",
-        description: "Neurobiologische Grundlagen, Sinnesphysiologie und verhaltensbiologische Mechanismen kognitiver Systeme."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/26796159"
       },
       {
         id: "24-M-INF1_a",
@@ -31,8 +30,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420519984",
-        description: "Diskrete Mathematik und Lineare Algebra für Informatiker: Mengen, Relationen, Vektorräume, Matrizen."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420519984"
       },
       {
         id: "28-P-NF-B",
@@ -44,8 +42,7 @@ const PFLICHT_SEMESTERS = [
         sl: "2",
         bPr: "-",
         uPr: "2",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/27461321",
-        description: "Grundlagen der Experimentalphysik (Mechanik, Wärmelehre, Elektrodynamik, Optik) inklusive Praktikum."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/27461321"
       },
       {
         id: "39-Inf-PP",
@@ -57,8 +54,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "-",
         uPr: "1",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420520482",
-        description: "Imperative und objektorientierte Programmierung, Kontrollstrukturen, Rekursion und Algorithmenentwurf."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420520482"
       }
     ]
   },
@@ -77,8 +73,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420520712",
-        description: "Analysis für Informatiker: Folgen, Reihen, Differential- und Integralrechnung in mehreren Dimensionen."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420520712"
       },
       {
         id: "27-WKP",
@@ -90,8 +85,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "-",
         uPr: "1",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/26796150",
-        description: "Kognitionspsychologische Modelle zu visueller Wahrnehmung, Aufmerksamkeit, Gedächtnis und Denkprozessen."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/26796150"
       },
       {
         id: "39-Inf-6",
@@ -103,8 +97,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420521085",
-        description: "Formale Sprachen, Grammatiken, endliche Automaten, Berechenbarkeit und Komplexitätstheorie."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420521085"
       },
       {
         id: "39-Inf-AD",
@@ -116,8 +109,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420521742",
-        description: "Bäume, Heaps, Hashing, Graphenalgorithmen, Sortierverfahren und Komplexitätsanalyse."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420521742"
       }
     ]
   },
@@ -136,8 +128,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420523059",
-        description: "Wahrscheinlichkeitsrechnung, Stochastik und mathematische Statistik für Datenanalyse & KI."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420523059"
       },
       {
         id: "39-Inf-8_a",
@@ -149,8 +140,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420556013",
-        description: "Von-Neumann-Architektur, Prozessorentwurf, Befehlssätze, Pipelining, Caches und Speicherhierarchien."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420556013"
       },
       {
         id: "39-Inf-10_a",
@@ -162,8 +152,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420523238",
-        description: "Relationales Datenmodell, SQL, Normalformen, Transaktionsverwaltung und moderne Datenbanktechnologien."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420523238"
       },
       {
         id: "39-Inf-13_b",
@@ -175,8 +164,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420742960",
-        description: "Kognitive Architekturen, symbolische Wissensrepräsentation, Handlungsplanung und Modellierung kognitiver Agenten."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420742960"
       },
       {
         id: "39-Inf-SE_a",
@@ -188,8 +176,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "-",
         uPr: "2",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/70750995",
-        description: "Vorgehensmodelle, Entwurfsmuster (Design Patterns), Softwarearchitektur, Testen und Versionskontrolle."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/70750995"
       },
       {
         id: "39-Inf-ML",
@@ -201,8 +188,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420564638",
-        description: "Überwachtes und unüberwachtes Lernen, Lineare Modelle, Decision Trees, Support Vector Machines und Validierung."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420564638"
       }
     ]
   },
@@ -221,8 +207,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420557284",
-        description: "Numerische Mathematik, Optimierungsverfahren, Matrixzerlegungen und Näherungsverfahren."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420557284"
       },
       {
         id: "39-Inf-17_b",
@@ -234,8 +219,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420557783",
-        description: "Prozessverwaltung, Threads, Interprozesskommunikation, Speicherverwaltung, Dateisysteme und Virtualisierung."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420557783"
       },
       {
         id: "39-Inf-18",
@@ -247,8 +231,7 @@ const PFLICHT_SEMESTERS = [
         sl: "1",
         bPr: "-",
         uPr: "1",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/70750959",
-        description: "Praxisprojekt in Teams: Konzeption, Implementierung und Präsentation eines Softwaresystems mit agilen Methoden."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/70750959"
       },
       {
         id: "39-Inf-GSI",
@@ -260,8 +243,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/70750978",
-        description: "Computerlinguistik, Natural Language Processing (NLP), Dialogmodelle und sprachbasierte Mensch-Technik-Interaktion."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/70750978"
       },
       {
         id: "39-Inf-NN",
@@ -273,8 +255,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/695569730",
-        description: "Deep Learning Grundlagen: Perzeptronen, Multilayer-Netze, Backpropagation, CNNs und Rekurrente Netze."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/695569730"
       }
     ]
   },
@@ -293,8 +274,7 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420559953",
-        description: "Parallele Programmierung (OpenMP, MPI), verteilte Systeme, Synchronisation und Cloud Computing."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/420559953"
       }
     ]
   },
@@ -313,14 +293,12 @@ const PFLICHT_SEMESTERS = [
         sl: "-",
         bPr: "1",
         uPr: "-",
-        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/26787779",
-        description: "Wissenschaftliche Bachelorarbeit mit schriftlicher Ausarbeitung und Präsentation."
+        link: "https://ekvv.uni-bielefeld.de/sinfo/publ/modul/26787779"
       }
     ]
   }
 ];
 
-// Helper to get flat list of all Pflicht modules
 function getAllPflichtModules() {
   const list = [];
   PFLICHT_SEMESTERS.forEach(sem => {

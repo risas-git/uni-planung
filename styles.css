@@ -1,6 +1,6 @@
 /* ==========================================================================
    Uni-Planung: KI & Kognitive Informatik (Uni Bielefeld)
-   Clean, Minimal Academic Design (No Emojis)
+   Clean Academic Design (In-Memory Only, No Search, No Emojis)
    ========================================================================== */
 
 :root {
@@ -57,7 +57,7 @@ body {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .header-top {
@@ -148,45 +148,6 @@ body {
   color: var(--text-muted);
 }
 
-/* Filter & Controls Toolbar */
-.toolbar {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 14px 20px;
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.search-box {
-  flex: 1;
-  min-width: 240px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
-  font-family: inherit;
-  outline: none;
-}
-
-.search-input:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
-}
-
-.filter-buttons {
-  display: flex;
-  gap: 6px;
-}
-
 .btn {
   display: inline-flex;
   align-items: center;
@@ -204,12 +165,6 @@ body {
 
 .btn:hover {
   background: var(--bg-subtle);
-}
-
-.btn.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #ffffff;
 }
 
 .btn-sm {
@@ -344,13 +299,6 @@ body {
   text-decoration: underline;
 }
 
-.modul-desc {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-  line-height: 1.35;
-}
-
 .col-lp {
   text-align: center;
   font-weight: 700;
@@ -428,15 +376,6 @@ body {
 
   .header-top {
     flex-direction: column;
-  }
-
-  .toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-buttons {
-    overflow-x: auto;
   }
 
   .metrics-summary-bar {

@@ -1,20 +1,27 @@
 /**
  * Uni-Planung: KI & Kognitive Informatik (Uni Bielefeld)
- * Simplified Semester-Grouped Pflichtbereich Planner with Weighted Grade Calculation
+ * Simplified In-Memory Pflichtbereich Planner with Weighted Grade Calculation
+ * Note: Data is kept strictly in-memory during the active browser session and not persisted to disk.
  */
 
 (function () {
   'use strict';
 
-  const STORAGE_KEY_COMPLETED = 'bielefeld_ki_pflicht_completed_v2';
-  const STORAGE_KEY_GRADES = 'bielefeld_ki_pflicht_grades_v2';
+  // Clear any existing localStorage data for privacy
+  try {
+    localStorage.removeItem('bielefeld_ki_study_progress_v1');
+    localStorage.removeItem('bielefeld_ki_custom_modules_v1');
+    localStorage.removeItem('bielefeld_ki_pflicht_v1');
+    localStorage.removeItem('bielefeld_ki_pflicht_completed_v2');
+    localStorage.removeItem('bielefeld_ki_pflicht_grades_v2');
+  } catch (e) {
+    // Ignore if storage is inaccessible
+  }
 
-  // Application State
+  // Application State (In-Memory Only)
   const state = {
     completedModuleIds: new Set(),
-    grades: {}, // { [moduleId]: 1.3 }
-    filter: 'all', // 'all' | 'open' | 'completed'
-    searchQuery: ''
+    grades: {} // { [moduleId]: 1.3 }
   };
 
   // DOM Elements
@@ -26,52 +33,13 @@
     completedModulesSubtext: document.getElementById('completedModulesSubtext'),
     openLpText: document.getElementById('openLpText'),
     openModulesSubtext: document.getElementById('openModulesSubtext'),
-    searchInput: document.getElementById('searchInput'),
-    filterButtons: document.querySelectorAll('.filter-buttons .btn'),
     resetBtn: document.getElementById('resetBtn')
   };
 
   // Initialization
   function init() {
-    loadSavedData();
     setupEventListeners();
     render();
-  }
-
-  // Load from LocalStorage
-  function loadSavedData() {
-    try {
-      const savedCompleted = localStorage.getItem(STORAGE_KEY_COMPLETED);
-      if (savedCompleted) {
-        const parsed = JSON.parse(savedCompleted);
-        if (Array.isArray(parsed)) {
-          state.completedModuleIds = new Set(parsed);
-        }
-      }
-    } catch (e) {
-      console.error('Error loading completed modules:', e);
-      state.completedModuleIds = new Set();
-    }
-
-    try {
-      const savedGrades = localStorage.getItem(STORAGE_KEY_GRADES);
-      if (savedGrades) {
-        state.grades = JSON.parse(savedGrades) || {};
-      }
-    } catch (e) {
-      console.error('Error loading grades:', e);
-      state.grades = {};
-    }
-  }
-
-  // Save to LocalStorage
-  function saveData() {
-    try {
-      localStorage.setItem(STORAGE_KEY_COMPLETED, JSON.stringify(Array.from(state.completedModuleIds)));
-      localStorage.setItem(STORAGE_KEY_GRADES, JSON.stringify(state.grades));
-    } catch (e) {
-      console.error('Error saving data:', e);
-    }
   }
 
   // Toggle Module Completed Status
@@ -81,7 +49,6 @@
     } else {
       state.completedModuleIds.add(moduleId);
     }
-    saveData();
     render();
   }
 
@@ -100,7 +67,6 @@
         }
       }
     }
-    saveData();
     render();
   }
 
@@ -124,7 +90,7 @@
         completedCount++;
       }
 
-      // If a grade exists and module is completed (or grade is present)
+      // If a grade exists and module is completed or grade is present
       if (isGradedModule && grade !== undefined && grade !== null && !isNaN(grade)) {
         if (isDone || grade <= 4.0) {
           weightedGradeSum += grade * mod.lp;
@@ -180,36 +146,8 @@
   // Render Semester Tables
   function renderSemesterTables() {
     elements.semestersContainer.innerHTML = '';
-    const query = state.searchQuery.trim().toLowerCase();
-
-    let totalVisibleModules = 0;
 
     PFLICHT_SEMESTERS.forEach(sem => {
-      // Filter modules in this semester
-      const visibleModules = sem.modules.filter(mod => {
-        const isDone = state.completedModuleIds.has(mod.id);
-
-        // Status Filter
-        if (state.filter === 'completed' && !isDone) return false;
-        if (state.filter === 'open' && isDone) return false;
-
-        // Search Query
-        if (query) {
-          const matchName = (mod.name || '').toLowerCase().includes(query);
-          const matchCode = (mod.code || '').toLowerCase().includes(query);
-          const matchDesc = (mod.description || '').toLowerCase().includes(query);
-          if (!matchName && !matchCode && !matchDesc) return false;
-        }
-
-        return true;
-      });
-
-      if (visibleModules.length === 0 && (query || state.filter !== 'all')) {
-        return;
-      }
-
-      totalVisibleModules += visibleModules.length;
-
       // Calculate semester completed LP
       let semCompletedLp = 0;
       let semTotalLp = 0;
@@ -257,133 +195,86 @@
 
       const tbody = section.querySelector('tbody');
 
-      if (visibleModules.length === 0) {
-        const emptyRow = document.createElement('tr');
-        emptyRow.innerHTML = `<td colspan="10" style="text-align: center; color: var(--text-muted); padding: 16px;">Keine Module in diesem Semester für die aktuellen Filterkriterien.</td>`;
-        tbody.appendChild(emptyRow);
-      } else {
-        visibleModules.forEach(mod => {
-          const isDone = state.completedModuleIds.has(mod.id);
-          const isGraded = mod.bPr !== '-' && parseInt(mod.bPr, 10) > 0;
-          const currentGrade = state.grades[mod.id] !== undefined ? state.grades[mod.id] : '';
+      sem.modules.forEach(mod => {
+        const isDone = state.completedModuleIds.has(mod.id);
+        const isGraded = mod.bPr !== '-' && parseInt(mod.bPr, 10) > 0;
+        const currentGrade = state.grades[mod.id] !== undefined ? state.grades[mod.id] : '';
 
-          const tr = document.createElement('tr');
-          if (isDone) tr.className = 'is-completed';
+        const tr = document.createElement('tr');
+        if (isDone) tr.className = 'is-completed';
 
-          let gradeCellHtml = `<span class="grade-na" title="Unbenotete Prüfung / Modul">-</span>`;
-          if (isGraded) {
-            gradeCellHtml = `
-              <input type="number" 
-                     step="0.1" 
-                     min="1.0" 
-                     max="5.0" 
-                     class="grade-input" 
-                     placeholder="z.B. 1.7" 
-                     value="${currentGrade}" 
-                     data-id="${escapeHtml(mod.id)}" 
-                     title="Note für ${escapeHtml(mod.name)} eintragen">
-            `;
-          }
-
-          tr.innerHTML = `
-            <td class="col-check">
-              <input type="checkbox" class="checkbox-input" data-id="${escapeHtml(mod.id)}" ${isDone ? 'checked' : ''} aria-label="Modul ${escapeHtml(mod.name)} als erledigt markieren">
-            </td>
-            <td class="col-code">${escapeHtml(mod.code)}</td>
-            <td class="col-name">
-              <div class="modul-name">
-                <a href="${escapeHtml(mod.link)}" target="_blank" rel="noopener noreferrer">
-                  ${escapeHtml(mod.name)}
-                </a>
-              </div>
-              <div class="modul-desc">${escapeHtml(mod.description)}</div>
-            </td>
-            <td class="col-lp">${mod.lp}</td>
-            <td class="col-sem">${escapeHtml(mod.semester)}</td>
-            <td class="col-binding">${escapeHtml(mod.binding)}</td>
-            <td class="col-exam">${escapeHtml(mod.sl)}</td>
-            <td class="col-exam">${escapeHtml(mod.bPr)}</td>
-            <td class="col-exam">${escapeHtml(mod.uPr)}</td>
-            <td class="col-grade">${gradeCellHtml}</td>
+        let gradeCellHtml = `<span class="grade-na" title="Unbenotete Prüfung / Modul">-</span>`;
+        if (isGraded) {
+          gradeCellHtml = `
+            <input type="number" 
+                   step="0.1" 
+                   min="1.0" 
+                   max="5.0" 
+                   class="grade-input" 
+                   placeholder="z.B. 1.7" 
+                   value="${currentGrade}" 
+                   data-id="${escapeHtml(mod.id)}" 
+                   title="Note für ${escapeHtml(mod.name)} eintragen">
           `;
+        }
 
-          // Checkbox listener
-          const checkbox = tr.querySelector('.checkbox-input');
-          checkbox.addEventListener('change', () => {
-            toggleModule(mod.id);
-          });
+        tr.innerHTML = `
+          <td class="col-check">
+            <input type="checkbox" class="checkbox-input" data-id="${escapeHtml(mod.id)}" ${isDone ? 'checked' : ''} aria-label="Modul ${escapeHtml(mod.name)} als erledigt markieren">
+          </td>
+          <td class="col-code">${escapeHtml(mod.code)}</td>
+          <td class="col-name">
+            <div class="modul-name">
+              <a href="${escapeHtml(mod.link)}" target="_blank" rel="noopener noreferrer">
+                ${escapeHtml(mod.name)}
+              </a>
+            </div>
+          </td>
+          <td class="col-lp">${mod.lp}</td>
+          <td class="col-sem">${escapeHtml(mod.semester)}</td>
+          <td class="col-binding">${escapeHtml(mod.binding)}</td>
+          <td class="col-exam">${escapeHtml(mod.sl)}</td>
+          <td class="col-exam">${escapeHtml(mod.bPr)}</td>
+          <td class="col-exam">${escapeHtml(mod.uPr)}</td>
+          <td class="col-grade">${gradeCellHtml}</td>
+        `;
 
-          // Grade input listener
-          const gradeInput = tr.querySelector('.grade-input');
-          if (gradeInput) {
-            gradeInput.addEventListener('change', (e) => {
-              updateGrade(mod.id, e.target.value);
-            });
-            gradeInput.addEventListener('blur', (e) => {
-              updateGrade(mod.id, e.target.value);
-            });
-            gradeInput.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter') {
-                e.target.blur();
-              }
-            });
-          }
-
-          tbody.appendChild(tr);
+        // Checkbox listener
+        const checkbox = tr.querySelector('.checkbox-input');
+        checkbox.addEventListener('change', () => {
+          toggleModule(mod.id);
         });
-      }
+
+        // Grade input listener
+        const gradeInput = tr.querySelector('.grade-input');
+        if (gradeInput) {
+          gradeInput.addEventListener('change', (e) => {
+            updateGrade(mod.id, e.target.value);
+          });
+          gradeInput.addEventListener('blur', (e) => {
+            updateGrade(mod.id, e.target.value);
+          });
+          gradeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.target.blur();
+            }
+          });
+        }
+
+        tbody.appendChild(tr);
+      });
 
       elements.semestersContainer.appendChild(section);
     });
-
-    if (totalVisibleModules === 0) {
-      elements.semestersContainer.innerHTML = `
-        <div style="text-align: center; padding: 40px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); color: var(--text-muted);">
-          <p>Keine passenden Module für die Such- oder Filterkriterien gefunden.</p>
-          <button id="clearFiltersBtn" class="btn btn-sm" style="margin-top: 12px;">Filter zurücksetzen</button>
-        </div>
-      `;
-      document.getElementById('clearFiltersBtn')?.addEventListener('click', resetFilters);
-    }
-  }
-
-  // Reset Filters
-  function resetFilters() {
-    state.filter = 'all';
-    state.searchQuery = '';
-    elements.searchInput.value = '';
-    elements.filterButtons.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.filter === 'all');
-    });
-    render();
   }
 
   // Event Listeners
   function setupEventListeners() {
-    // Search Input
-    elements.searchInput.addEventListener('input', (e) => {
-      state.searchQuery = e.target.value;
-      renderSemesterTables();
-    });
-
-    // Filter Buttons
-    elements.filterButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        elements.filterButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.filter = btn.dataset.filter;
-        renderSemesterTables();
-      });
-    });
-
-    // Reset Progress
+    // Reset inputs in current session
     elements.resetBtn.addEventListener('click', () => {
-      if (confirm('Möchtest du alle gesetzten Haken und Noten wirklich zurücksetzen?')) {
-        state.completedModuleIds.clear();
-        state.grades = {};
-        saveData();
-        render();
-      }
+      state.completedModuleIds.clear();
+      state.grades = {};
+      render();
     });
   }
 
