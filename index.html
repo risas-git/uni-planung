@@ -23,7 +23,7 @@
           </div>
         </div>
         <div class="header-actions">
-          <button id="exportExcelBtn" class="btn btn-sm" title="Tabelle als Excel-Datei (.csv) exportieren">Excel Export</button>
+          <button id="exportExcelBtn" class="btn btn-sm" title="Gesamten Studienplan als Excel-Datei (.csv) exportieren">Excel Export</button>
           <button id="importExcelBtn" class="btn btn-sm" title="Gespeicherte Excel-Datei (.csv) laden">Excel Import</button>
           <button id="resetBtn" class="btn btn-sm" title="Eingaben im aktuellen Tab zurücksetzen">Zurücksetzen</button>
           <input type="file" id="fileInput" accept=".csv,.txt,.json" style="display: none;">
@@ -33,38 +33,250 @@
       <!-- Key Metrics & Average Grade Summary -->
       <div class="metrics-summary-bar">
         <div class="metric-stat-block">
-          <div class="metric-stat-label">Notendurchschnitt (gewichtet)</div>
+          <div class="metric-stat-label">Gesamtschnitt (gewichtet)</div>
           <div id="averageGradeDisplay" class="metric-stat-value highlight-grade">-</div>
-          <div id="gradedLpSubtext" class="metric-stat-subtext">0 LP benotet eingebracht</div>
+          <div id="gradedLpSubtext" class="metric-stat-subtext">0 LP benotet</div>
         </div>
         <div class="metric-stat-block">
-          <div class="metric-stat-label">Abgeschlossene Leistungspunkte</div>
-          <div class="metric-stat-value"><span id="completedLpText">0</span> <span style="font-size: 0.95rem; font-weight: normal; color: var(--text-muted);">/ 120 LP</span></div>
-          <div id="completedModulesSubtext" class="metric-stat-subtext">0 von 22 Pflichtmodulen</div>
+          <div class="metric-stat-label">Gesamtfortschritt</div>
+          <div class="metric-stat-value"><span id="totalDegreeLpText">0</span> <span style="font-size: 0.95rem; font-weight: normal; color: var(--text-muted);">/ 180 LP</span></div>
+          <div id="totalRemainingLpSubtext" class="metric-stat-subtext">180 LP ausstehend</div>
         </div>
         <div class="metric-stat-block">
-          <div class="metric-stat-label">Noch offene Module</div>
-          <div class="metric-stat-value"><span id="openLpText">120</span> <span style="font-size: 0.95rem; font-weight: normal; color: var(--text-muted);">LP offen</span></div>
-          <div id="openModulesSubtext" class="metric-stat-subtext">22 Pflichtmodule ausstehend</div>
+          <div class="metric-stat-label">Pflichtbereich</div>
+          <div class="metric-stat-value"><span id="pflichtLpText">0</span> <span style="font-size: 0.95rem; font-weight: normal; color: var(--text-muted);">/ 120 LP</span></div>
+          <div id="pflichtSubtext" class="metric-stat-subtext">0 / 22 Module</div>
+        </div>
+        <div class="metric-stat-block">
+          <div class="metric-stat-label">Wahlpflicht</div>
+          <div class="metric-stat-value"><span id="wpLpText">0</span> <span style="font-size: 0.95rem; font-weight: normal; color: var(--text-muted);">/ 20 LP</span></div>
+          <div id="wpSubtext" class="metric-stat-subtext">0 LP belegt</div>
+        </div>
+        <div class="metric-stat-block">
+          <div class="metric-stat-label">MiKE / Indiv. Erg.</div>
+          <div class="metric-stat-value"><span id="mikeLpText">0</span> <span style="font-size: 0.95rem; font-weight: normal; color: var(--text-muted);">/ 10 LP</span></div>
+          <div id="mikeSubtext" class="metric-stat-subtext">0 LP belegt</div>
+        </div>
+        <div class="metric-stat-block">
+          <div class="metric-stat-label">Strukt. Ergänzung</div>
+          <div class="metric-stat-value"><span id="seLpText">0</span> <span style="font-size: 0.95rem; font-weight: normal; color: var(--text-muted);">/ 30 LP</span></div>
+          <div id="seSubtext" class="metric-stat-subtext">0 LP belegt</div>
         </div>
       </div>
     </header>
 
-    <!-- Semester Sections Container -->
-    <main id="semestersContainer">
-      <!-- Generated dynamically by app.js -->
-    </main>
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-pflicht">
+        Pflichtbereich <span class="tab-badge" id="tabBadgePflicht">0/120 LP</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-wahlpflicht">
+        Wahlpflichtbereich <span class="tab-badge" id="tabBadgeWp">0/20 LP</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-mike">
+        Individuelle Ergänzung (MiKE) <span class="tab-badge" id="tabBadgeMike">0/10 LP</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-ergaenzung">
+        Strukturierte Ergänzung <span class="tab-badge" id="tabBadgeSe">0/30 LP</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-courses">
+        Veranstaltungen & Zuordnungen <span class="tab-badge" id="tabBadgeCourses">0 Kurse</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: PFLICHTBEREICH -->
+    <section id="tab-pflicht" class="tab-content active">
+      <div id="semestersContainer">
+        <!-- Generated by app.js -->
+      </div>
+    </section>
+
+    <!-- TAB 2: WAHLPFLICHTBEREICH (20 LP) -->
+    <section id="tab-wahlpflicht" class="tab-content">
+      <div class="area-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Wahlpflichtbereich (20 LP)</h2>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+              Wähle Schwerpunkte (10 LP) und/oder Basismodule (5 LP). Kurse können im Reiter "Veranstaltungen & Zuordnungen" eingetragen und zugeordnet werden.
+            </div>
+          </div>
+          <span class="section-lp-badge" id="areaWpBadge">0 / 20 LP belegt</span>
+        </div>
+        <div class="table-responsive">
+          <table class="modul-table">
+            <thead>
+              <tr>
+                <th class="col-code">Kürzel</th>
+                <th class="col-name">Modulbezeichnung</th>
+                <th class="col-type">Typ</th>
+                <th class="col-lp">Soll LP</th>
+                <th class="col-lp">Belegt</th>
+                <th>Zugeordnete Veranstaltungen</th>
+                <th class="col-exam">Prüfung</th>
+                <th class="col-grade">Schnitt</th>
+                <th class="col-type">Status</th>
+              </tr>
+            </thead>
+            <tbody id="wahlpflichtTableBody">
+              <!-- Generated by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: MiKE / INDIVIDUELLE ERGÄNZUNG (10 LP) -->
+    <section id="tab-mike" class="tab-content">
+      <div class="area-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Individuelle Ergänzung / MiKE (10 LP)</h2>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+              Ergänzungsmodul Informatik (39-Inf-EGMI) oder fachübergreifender Kompetenzerwerb (39-Inf-MIKE).
+            </div>
+          </div>
+          <span class="section-lp-badge" id="areaMikeBadge">0 / 10 LP belegt</span>
+        </div>
+        <div class="table-responsive">
+          <table class="modul-table">
+            <thead>
+              <tr>
+                <th class="col-code">Kürzel</th>
+                <th class="col-name">Modulbezeichnung</th>
+                <th class="col-type">Typ</th>
+                <th class="col-lp">Soll LP</th>
+                <th class="col-lp">Belegt</th>
+                <th>Zugeordnete Veranstaltungen</th>
+                <th class="col-exam">Prüfung</th>
+                <th class="col-grade">Schnitt</th>
+                <th class="col-type">Status</th>
+              </tr>
+            </thead>
+            <tbody id="mikeTableBody">
+              <!-- Generated by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: STRUKTURIERTE ERGÄNZUNG (30 LP) -->
+    <section id="tab-ergaenzung" class="tab-content">
+      <div class="area-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Strukturierte Ergänzung des fw 1-Fach-Ba (30 LP)</h2>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+              Profilierungsangebote und Vertiefungstracks (Schwerpunkte 10 LP und Basismodule 5 LP).
+            </div>
+          </div>
+          <span class="section-lp-badge" id="areaSeBadge">0 / 30 LP belegt</span>
+        </div>
+        <div class="table-responsive">
+          <table class="modul-table">
+            <thead>
+              <tr>
+                <th class="col-code">Kürzel</th>
+                <th class="col-name">Modulbezeichnung</th>
+                <th class="col-type">Typ</th>
+                <th class="col-lp">Soll LP</th>
+                <th class="col-lp">Belegt</th>
+                <th>Zugeordnete Veranstaltungen</th>
+                <th class="col-exam">Prüfung</th>
+                <th class="col-grade">Schnitt</th>
+                <th class="col-type">Status</th>
+              </tr>
+            </thead>
+            <tbody id="seTableBody">
+              <!-- Generated by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: LEHRVERANSTALTUNGEN & ZUORDNUNGEN (KURS-MANAGER) -->
+    <section id="tab-courses" class="tab-content">
+      <!-- Course Logger Card -->
+      <div class="logger-card">
+        <h2 class="logger-title">Neue Lehrveranstaltung erfassen</h2>
+        <p class="logger-desc">
+          Erfasse besuchte Kurse/Vorlesungen, markiere alle Module, für die dieser Kurs angerechnet werden kann, und wähle die aktive Zuordnung aus.
+        </p>
+
+        <form id="addCourseForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="inputCourseName">Veranstaltungsname / EkVV-Nummer *</label>
+              <input type="text" id="inputCourseName" class="form-control" placeholder="z.B. 392180 Machine Learning Methods and Applications (V)" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="inputCourseLp">Leistungspunkte (LP) *</label>
+              <input type="number" id="inputCourseLp" class="form-control" value="5" min="1" max="30" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="inputCourseGrade">Note (optional)</label>
+              <input type="number" step="0.1" min="1.0" max="5.0" id="inputCourseGrade" class="form-control" placeholder="z.B. 1.3">
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary" style="height: 38px;">Veranstaltung anlegen</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Mögliche Module für diese Veranstaltung (Mehrfachauswahl möglich):</label>
+            <div class="possible-modules-container">
+              <div id="possibleModulesCheckboxGrid" class="checkbox-group-grid">
+                <!-- Checkboxes populated by app.js -->
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Logged Courses List & Allocation Changer -->
+      <div class="area-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Erfasste Veranstaltungen & Aktive Modul-Zuordnungen</h2>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+              Ändere die Zuordnung über das Dropdown-Menü, um verschiedene Kombinationen und LP-Verteilungen zu testen.
+            </div>
+          </div>
+          <span class="section-lp-badge" id="coursesCountBadge">0 Veranstaltungen</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="modul-table">
+            <thead>
+              <tr>
+                <th class="col-name">Veranstaltung</th>
+                <th class="col-lp">LP</th>
+                <th class="col-grade">Note</th>
+                <th>Mögliche Module</th>
+                <th style="min-width: 280px;">Aktive Zuordnung (Modul)</th>
+                <th style="width: 80px; text-align: center;">Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="loggedCoursesTableBody">
+              <!-- Populated dynamically by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
 
     <!-- Legend -->
     <footer class="legend-section" style="margin-top: 24px;">
       <div class="legend-title">Legende & Berechnungshinweise</div>
       <div class="legend-list">
-        <div><strong>LP:</strong> Leistungspunkte (ECTS-Punkte)</div>
-        <div><strong>Empf. Beginn:</strong> Fachsemester laut Verlaufsplan</div>
-        <div><strong>SL:</strong> Anzahl unbenotete Studienleistungen</div>
+        <div><strong>LP:</strong> Leistungspunkte (ECTS)</div>
+        <div><strong>Soll LP:</strong> Benötigte LP für das Modul (5 oder 10 LP)</div>
         <div><strong>bPr:</strong> Anzahl benotete Modulprüfungen</div>
         <div><strong>uPr:</strong> Anzahl unbenotete Modulprüfungen</div>
-        <div><strong>Note:</strong> Notenwert (1,0 - 4,0). Der Notendurchschnitt wird mit den LP der benoteten Module gewichtet. Keine Speicherung im Browser.</div>
+        <div><strong>Gesamtfortschritt:</strong> 180 LP (120 Pflicht + 20 Wahlpflicht + 10 MiKE + 30 Strukturierte Ergänzung)</div>
+        <div><strong>Notenschnitt:</strong> Gewichtet mit den LP aller benoteten Pflicht- und Wahlpflichtleistungen.</div>
       </div>
     </footer>
 
