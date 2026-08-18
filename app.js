@@ -351,7 +351,13 @@
     const reader = new FileReader();
     reader.onload = function (e) {
       try {
-        const text = e.target.result;
+        let text = e.target.result;
+        if (!text) return;
+
+        // Strip UTF-8 BOM if present
+        if (text.charCodeAt(0) === 0xFEFF) {
+          text = text.slice(1);
+        }
 
         // Check if JSON format
         if (text.trim().startsWith('{')) {
@@ -374,17 +380,17 @@
           return;
         }
 
-        // Detect delimiter (semicolon or comma or tab)
+        // Detect delimiter (semicolon, comma, tab)
         const firstLine = lines[0];
         let delimiter = ';';
-        if (firstLine.includes(';') === false && firstLine.includes(',')) {
+        if (!firstLine.includes(';') && firstLine.includes(',')) {
           delimiter = ',';
         } else if (firstLine.includes('\t')) {
           delimiter = '\t';
         }
 
-        // Determine column indexes from header
-        const headerCols = parseCsvLine(firstLine, delimiter).map(c => c.toLowerCase().trim());
+        // Determine column indexes from header safely
+        const headerCols = parseCsvLine(firstLine, delimiter).map(c => (c ? String(c).toLowerCase().trim() : ''));
         const codeIdx = headerCols.findIndex(c => c.includes('kuerzel') || c.includes('kürzel') || c.includes('code'));
         const statusIdx = headerCols.findIndex(c => c.includes('status'));
         const gradeIdx = headerCols.findIndex(c => c.includes('note') || c.includes('grade'));
@@ -393,14 +399,21 @@
         const allModules = getAllPflichtModules();
         let importedCount = 0;
 
+        // Clear existing state before importing
+        state.completedModuleIds.clear();
+        state.grades = {};
+
         for (let i = 1; i < lines.length; i++) {
           const cols = parseCsvLine(lines[i], delimiter);
-          if (cols.length === 0) continue;
+          if (!cols || cols.length === 0) continue;
 
-          const rowCode = codeIdx >= 0 ? cols[codeIdx].trim() : '';
-          const rowName = nameIdx >= 0 ? cols[nameIdx].trim() : '';
-          const rowStatus = statusIdx >= 0 ? cols[statusIdx].trim().toLowerCase() : '';
-          const rowGrade = gradeIdx >= 0 ? cols[gradeIdx].trim().replace(',', '.') : '';
+          const rowCode = (codeIdx >= 0 && cols[codeIdx] !== undefined) ? String(cols[codeIdx]).trim() : '';
+          const rowName = (nameIdx >= 0 && cols[nameIdx] !== undefined) ? String(cols[nameIdx]).trim() : '';
+          const rowStatus = (statusIdx >= 0 && cols[statusIdx] !== undefined) ? String(cols[statusIdx]).trim().toLowerCase() : '';
+          const rowGrade = (gradeIdx >= 0 && cols[gradeIdx] !== undefined) ? String(cols[gradeIdx]).trim().replace(',', '.') : '';
+
+          // Skip summary rows or empty rows
+          if (!rowCode && !rowName) continue;
 
           // Find matching module by code or name
           const matchedMod = allModules.find(m => 
@@ -453,6 +466,7 @@
 
   // Parse a single CSV line respecting quotes
   function parseCsvLine(line, delimiter) {
+    if (!line) return [];
     const result = [];
     let current = '';
     let inQuotes = false;
@@ -460,7 +474,7 @@
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
       if (char === '"') {
-        if (inQuotes && line[i + 1] === '"') {
+        if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
           current += '"';
           i++;
         } else {
