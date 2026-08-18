@@ -74,7 +74,7 @@
               </div>
             </div>
 
-            <!-- Privacy Notice Banner -->
+            <!-- Privacy Notice & Disclaimer Banner -->
             <v-alert
               type="info"
               variant="tonal"
@@ -82,7 +82,12 @@
               class="my-3 text-caption rounded"
               icon="mdi-shield-check-outline"
             >
-              <strong>Datenschutzhinweis:</strong> Deine eingegebenen Daten werden aus Datenschutzgründen nicht auf Servern oder im Browser gespeichert. Du kannst deine Daten jederzeit über <strong>„Excel Export“</strong> als CSV-Datei sichern und bei deinem nächsten Besuch über <strong>„Excel Import“</strong> wieder einladen, um nahtlos weiterzuarbeiten.
+              <div class="mb-1">
+                <strong>Datenschutzhinweis:</strong> Deine eingegebenen Daten werden aus Datenschutzgründen nicht auf Servern oder im Browser gespeichert. Du kannst deine Daten jederzeit über <strong>„Excel Export“</strong> als CSV-Datei sichern und bei deinem nächsten Besuch über <strong>„Excel Import“</strong> wieder einladen, um nahtlos weiterzuarbeiten.
+              </div>
+              <div class="border-t pt-1 mt-1 text-grey-darken-3">
+                <strong>Haftungsausschluss / Wichtiger Hinweis:</strong> Bitte überprüfe alle Modulzuordnungen und LP-Berechnungen stets eigenständig anhand deiner offiziellen Prüfungsordnung und Studieninformation (Prüfungsamt / EkVV). Für die Richtigkeit und Vollständigkeit der Angaben und Berechnungen wird keine Gewähr übernommen.
+              </div>
             </v-alert>
 
             <!-- Metrics Summary Cards -->
