@@ -73,18 +73,9 @@
               {{ mod.code }}
             </td>
 
-            <!-- Bezeichnung with official EkVV Link -->
-            <td>
-              <a
-                :href="mod.link"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-decoration-none font-weight-bold"
-                :class="isCompleted(mod.id) ? 'text-green-darken-3' : 'text-primary'"
-              >
-                {{ mod.name }}
-                <v-icon size="x-small" icon="mdi-open-in-new" class="ms-1 text-grey" />
-              </a>
+            <!-- Bezeichnung -->
+            <td class="font-weight-medium">
+              {{ mod.name }}
             </td>
 
             <!-- LP -->
