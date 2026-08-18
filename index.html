@@ -202,7 +202,7 @@
       <div class="logger-card">
         <h2 class="logger-title">Neue Lehrveranstaltung erfassen</h2>
         <p class="logger-desc">
-          Erfasse besuchte Kurse/Vorlesungen, markiere alle Module, für die dieser Kurs angerechnet werden kann, und wähle die aktive Zuordnung aus.
+          Erfasse besuchte Kurse/Vorlesungen, wähle über die Suche alle Module aus, für die dieser Kurs angerechnet werden kann, und lege ihn an.
         </p>
 
         <form id="addCourseForm">
@@ -217,20 +217,30 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="inputCourseGrade">Note (optional)</label>
-              <input type="number" step="0.1" min="1.0" max="5.0" id="inputCourseGrade" class="form-control" placeholder="z.B. 1.3">
-            </div>
-            <div class="form-group">
-              <button type="submit" class="btn btn-primary" style="height: 38px;">Veranstaltung anlegen</button>
+              <input type="number" step="0.1" min="1.0" max="5.0" id="inputCourseGrade" class="form-control">
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Mögliche Module für diese Veranstaltung (Mehrfachauswahl möglich):</label>
-            <div class="possible-modules-container">
-              <div id="possibleModulesCheckboxGrid" class="checkbox-group-grid">
-                <!-- Checkboxes populated by app.js -->
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" for="inputModuleSearch">Mögliche Module für diese Veranstaltung (Tippen zum Suchen & Auswählen):</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <input type="text" id="inputModuleSearch" list="allElectivesDatalist" class="form-control" placeholder="Modul suchen (z.B. KI, 39-Inf-WP-DS, Robotik, MiKE, MTI, Systems)..." style="flex: 1; min-width: 280px;">
+              <button type="button" id="btnAddPossibleModule" class="btn btn-sm" style="padding: 7px 14px;">+ Modul hinzufügen</button>
+            </div>
+            <datalist id="allElectivesDatalist">
+              <!-- Populated by app.js -->
+            </datalist>
+
+            <div style="margin-top: 10px;">
+              <div style="font-size: 0.775rem; color: var(--text-muted); margin-bottom: 4px;">Ausgewählte mögliche Module für diesen Kurs:</div>
+              <div id="selectedPossibleTagsContainer" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 32px; padding: 6px; background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-sm);">
+                <span style="color: var(--text-light); font-size: 0.8rem; font-style: italic;" id="emptyTagsPrompt">Noch keine Module ausgewählt (Kurs kann über die obige Suche Modulen zugewiesen werden)</span>
               </div>
             </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary" style="padding: 8px 18px; font-size: 0.875rem;">Veranstaltung anlegen</button>
           </div>
         </form>
       </div>
@@ -239,9 +249,9 @@
       <div class="area-section">
         <div class="section-header">
           <div>
-            <h2 class="section-title">Erfasste Veranstaltungen & Aktive Modul-Zuordnungen</h2>
+            <h2 class="section-title">Erfasste Veranstaltungen & Modul-Zuordnungen</h2>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
-              Ändere die Zuordnung über das Dropdown-Menü, um verschiedene Kombinationen und LP-Verteilungen zu testen.
+              Klicke direkt auf ein Modul-Badge, um die aktive Zuordnung sofort zu wechseln und LP-Verteilungen live zu testen.
             </div>
           </div>
           <span class="section-lp-badge" id="coursesCountBadge">0 Veranstaltungen</span>
@@ -254,8 +264,8 @@
                 <th class="col-name">Veranstaltung</th>
                 <th class="col-lp">LP</th>
                 <th class="col-grade">Note</th>
-                <th>Mögliche Module</th>
-                <th style="min-width: 280px;">Aktive Zuordnung (Modul)</th>
+                <th>Mögliche Module (Klick zum Aktivieren)</th>
+                <th style="min-width: 240px;">Aktive Zuordnung</th>
                 <th style="width: 80px; text-align: center;">Aktion</th>
               </tr>
             </thead>

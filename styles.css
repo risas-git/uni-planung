@@ -1,6 +1,6 @@
 /* ==========================================================================
    Uni-Planung: KI & Kognitive Informatik (Uni Bielefeld)
-   Clean Academic Design with Elective Module Assignment Engine (No Emojis)
+   Clean Academic Design with Searchable Module Picker & 1-Click Pill Allocation
    ========================================================================== */
 
 :root {
@@ -367,7 +367,7 @@ body {
 }
 
 .col-name {
-  min-width: 250px;
+  min-width: 240px;
 }
 
 .modul-name a {
@@ -426,18 +426,74 @@ body {
   font-style: italic;
 }
 
+/* Module Choice Pill Buttons (1-Click Allocation in Table) */
+.module-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-size: 0.775rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin: 2px 4px 2px 0;
+  text-align: left;
+}
+
+.module-pill-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.module-pill-btn.active {
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+  color: var(--color-success);
+  font-weight: 700;
+  box-shadow: 0 0 0 1px var(--color-success);
+}
+
+/* Selected Possible Module Tags in Logger Form */
+.selected-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
+
+.selected-tag-remove {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.selected-tag-remove:hover {
+  color: #ef4444;
+}
+
 /* Module Assignment Select Dropdown */
 .module-select-dropdown {
   width: 100%;
-  max-width: 320px;
-  padding: 5px 8px;
+  max-width: 280px;
+  padding: 4px 6px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  font-size: 0.825rem;
+  font-size: 0.8rem;
   font-family: inherit;
   color: var(--text-main);
   background: var(--bg-surface);
   outline: none;
+  margin-top: 4px;
 }
 
 .module-select-dropdown:focus {
@@ -468,7 +524,7 @@ body {
 
 .form-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 12px;
   align-items: flex-end;
   margin-bottom: 16px;
@@ -501,38 +557,7 @@ body {
   border-color: var(--color-accent);
 }
 
-.possible-modules-container {
-  background: var(--bg-subtle);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  margin-bottom: 16px;
-}
-
-.checkbox-group-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 8px;
-  max-height: 160px;
-  overflow-y: auto;
-  padding: 4px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: var(--radius-sm);
-}
-
-.checkbox-label:hover {
-  background: var(--bg-highlight);
-}
-
-/* Assigned Course Tag */
+/* Assigned Course Tag in Elective Tables */
 .assigned-course-pill {
   display: inline-flex;
   align-items: center;

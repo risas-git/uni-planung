@@ -1,6 +1,6 @@
 /**
  * Uni-Planung: KI & Kognitive Informatik (Uni Bielefeld)
- * Multi-Area Degree Planner with Flexible Course-to-Module Allocation Engine
+ * Multi-Area Degree Planner with Searchable Module Picker and 1-Click Pill Allocation
  * In-Memory Privacy Mode with Excel Export/Import.
  */
 
@@ -23,7 +23,8 @@
     activeTab: 'tab-pflicht',
     pflichtCompletedIds: new Set(),
     pflichtGrades: {}, // { [moduleId]: 1.3 }
-    loggedCourses: [] // Array of { id, name, lp, grade, possibleModuleIds: [], assignedModuleId: '' }
+    loggedCourses: [], // Array of { id, name, lp, grade, possibleModuleIds: [], assignedModuleId: '' }
+    formPossibleModuleIds: [] // Array of module IDs currently chosen in the "New Course" form
   };
 
   // DOM Elements
@@ -61,13 +62,16 @@
     mikeTableBody: document.getElementById('mikeTableBody'),
     seTableBody: document.getElementById('seTableBody'),
     loggedCoursesTableBody: document.getElementById('loggedCoursesTableBody'),
-    possibleModulesCheckboxGrid: document.getElementById('possibleModulesCheckboxGrid'),
 
     // Form elements
     addCourseForm: document.getElementById('addCourseForm'),
     inputCourseName: document.getElementById('inputCourseName'),
     inputCourseLp: document.getElementById('inputCourseLp'),
     inputCourseGrade: document.getElementById('inputCourseGrade'),
+    inputModuleSearch: document.getElementById('inputModuleSearch'),
+    allElectivesDatalist: document.getElementById('allElectivesDatalist'),
+    btnAddPossibleModule: document.getElementById('btnAddPossibleModule'),
+    selectedPossibleTagsContainer: document.getElementById('selectedPossibleTagsContainer'),
 
     // Actions
     resetBtn: document.getElementById('resetBtn'),
@@ -79,26 +83,85 @@
   // Initialization
   function init() {
     setupEventListeners();
-    populatePossibleModulesCheckboxes();
+    populateElectivesDatalist();
+    renderFormSelectedTags();
     render();
   }
 
-  // Populate checkbox list in course logger
-  function populatePossibleModulesCheckboxes() {
+  // Populate Datalist with all elective modules for quick search
+  function populateElectivesDatalist() {
     const allElectives = getAllElectiveModules();
-    elements.possibleModulesCheckboxGrid.innerHTML = '';
+    elements.allElectivesDatalist.innerHTML = '';
 
     allElectives.forEach(mod => {
-      const label = document.createElement('label');
-      label.className = 'checkbox-label';
-      label.title = `${mod.area}: ${mod.code} - ${mod.name} (${mod.lp} LP)`;
+      const opt = document.createElement('option');
+      opt.value = `${mod.code} - ${mod.name} (${mod.lp} LP, ${mod.area})`;
+      opt.dataset.id = mod.id;
+      elements.allElectivesDatalist.appendChild(opt);
+    });
+  }
 
-      label.innerHTML = `
-        <input type="checkbox" name="possibleModule" value="${escapeHtml(mod.id)}" class="checkbox-input" style="width: 15px; height: 15px;">
-        <span><strong>${escapeHtml(mod.code)}</strong> ${escapeHtml(mod.name)} (${mod.lp} LP - ${escapeHtml(mod.area)})</span>
+  // Helper: Find module by search input string
+  function findModuleBySearchText(text) {
+    if (!text) return null;
+    const clean = text.trim().toLowerCase();
+    const allElectives = getAllElectiveModules();
+
+    return allElectives.find(m => 
+      m.id.toLowerCase() === clean ||
+      m.code.toLowerCase() === clean ||
+      m.name.toLowerCase() === clean ||
+      `${m.code} - ${m.name}`.toLowerCase().includes(clean) ||
+      clean.startsWith(m.code.toLowerCase())
+    ) || null;
+  }
+
+  // Add module to the form's possible modules list
+  function addModuleToFormSelection(modId) {
+    if (!modId) return;
+    if (!state.formPossibleModuleIds.includes(modId)) {
+      state.formPossibleModuleIds.push(modId);
+      renderFormSelectedTags();
+    }
+    elements.inputModuleSearch.value = '';
+  }
+
+  // Remove module from form's possible modules list
+  function removeModuleFromFormSelection(modId) {
+    state.formPossibleModuleIds = state.formPossibleModuleIds.filter(id => id !== modId);
+    renderFormSelectedTags();
+  }
+
+  // Render tag pills in the course creation form
+  function renderFormSelectedTags() {
+    elements.selectedPossibleTagsContainer.innerHTML = '';
+    const allElectives = getAllElectiveModules();
+
+    if (state.formPossibleModuleIds.length === 0) {
+      elements.selectedPossibleTagsContainer.innerHTML = `
+        <span style="color: var(--text-light); font-size: 0.8rem; font-style: italic;">
+          Noch keine Module ausgewählt (Suche oben nutzen, um Module hinzuzufügen)
+        </span>
+      `;
+      return;
+    }
+
+    state.formPossibleModuleIds.forEach(modId => {
+      const mod = allElectives.find(m => m.id === modId);
+      if (!mod) return;
+
+      const tag = document.createElement('div');
+      tag.className = 'selected-tag-pill';
+      tag.innerHTML = `
+        <span><strong>${escapeHtml(mod.code)}</strong> ${escapeHtml(mod.name)} (${mod.lp} LP)</span>
+        <span class="selected-tag-remove" data-action="remove-tag" data-id="${escapeHtml(mod.id)}" title="Entfernen">✕</span>
       `;
 
-      elements.possibleModulesCheckboxGrid.appendChild(label);
+      tag.querySelector('[data-action="remove-tag"]').addEventListener('click', () => {
+        removeModuleFromFormSelection(mod.id);
+      });
+
+      elements.selectedPossibleTagsContainer.appendChild(tag);
     });
   }
 
@@ -471,7 +534,7 @@
   }
 
   // ------------------------------------------
-  // 3. RENDER LOGGED COURSES & ALLOCATION MANAGER
+  // 3. RENDER LOGGED COURSES & 1-CLICK ALLOCATION MANAGER
   // ------------------------------------------
   function renderLoggedCoursesTable() {
     elements.loggedCoursesTableBody.innerHTML = '';
@@ -491,25 +554,34 @@
     state.loggedCourses.forEach(course => {
       const tr = document.createElement('tr');
 
-      // Build Possible Modules pills
+      // Build 1-Click Possible Module Pills
       let possiblePillsHtml = '';
       if (course.possibleModuleIds && course.possibleModuleIds.length > 0) {
         possiblePillsHtml = course.possibleModuleIds.map(modId => {
           const m = allElectives.find(x => x.id === modId);
-          return m ? `<span class="assigned-course-pill" style="font-size: 0.725rem;">${escapeHtml(m.code)}</span>` : '';
-        }).join(' ');
+          if (!m) return '';
+          const isActive = course.assignedModuleId === m.id;
+          return `
+            <button type="button" 
+                    class="module-pill-btn ${isActive ? 'active' : ''}" 
+                    data-action="set-active-module" 
+                    data-course-id="${escapeHtml(course.id)}" 
+                    data-module-id="${escapeHtml(m.id)}" 
+                    title="${isActive ? 'Aktuell diesem Modul zugeordnet' : 'Klicken, um diesen Kurs hier zuzuordnen'}">
+              ${isActive ? '✓ ' : ''}${escapeHtml(m.code)} (${m.lp} LP, ${escapeHtml(m.type || m.area)})
+            </button>
+          `;
+        }).join('');
       } else {
-        possiblePillsHtml = `<span style="color: var(--text-light); font-size: 0.75rem;">Alle Wahlmodule möglich</span>`;
+        possiblePillsHtml = `<span style="color: var(--text-light); font-size: 0.75rem;">Keine spezifischen Module markiert</span>`;
       }
 
-      // Build Allocation Dropdown
-      // Option list: shows eligible modules first, then any other elective modules
+      // Build Allocation Dropdown for fallback/changing to other modules
       const optionsHtml = [];
-      optionsHtml.push(`<option value="" ${!course.assignedModuleId ? 'selected' : ''}>-- Nicht zugeordnet (Kein Modul) --</option>`);
+      optionsHtml.push(`<option value="" ${!course.assignedModuleId ? 'selected' : ''}>-- Nicht zugeordnet --</option>`);
 
-      // Eligible modules group
       if (course.possibleModuleIds && course.possibleModuleIds.length > 0) {
-        optionsHtml.push(`<optgroup label="Als passend markierte Module:">`);
+        optionsHtml.push(`<optgroup label="Passende Module:">`);
         course.possibleModuleIds.forEach(modId => {
           const m = allElectives.find(x => x.id === modId);
           if (m) {
@@ -520,8 +592,7 @@
         optionsHtml.push(`</optgroup>`);
       }
 
-      // Other modules group
-      optionsHtml.push(`<optgroup label="Andere Module:">`);
+      optionsHtml.push(`<optgroup label="Alle anderen Module:">`);
       allElectives.forEach(m => {
         if (!course.possibleModuleIds || !course.possibleModuleIds.includes(m.id)) {
           const isSelected = course.assignedModuleId === m.id ? 'selected' : '';
@@ -543,7 +614,11 @@
                  data-course-id="${escapeHtml(course.id)}" 
                  title="Note für diesen Kurs ändern">
         </td>
-        <td>${possiblePillsHtml}</td>
+        <td>
+          <div style="display: flex; flex-wrap: wrap; gap: 2px;">
+            ${possiblePillsHtml}
+          </div>
+        </td>
         <td>
           <select class="module-select-dropdown" data-course-id="${escapeHtml(course.id)}">
             ${optionsHtml.join('')}
@@ -556,7 +631,17 @@
         </td>
       `;
 
-      // Listener for changing module allocation
+      // Listener for 1-click pill activation
+      tr.querySelectorAll('[data-action="set-active-module"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetModId = btn.dataset.moduleId;
+          course.assignedModuleId = targetModId;
+          render();
+        });
+      });
+
+      // Listener for dropdown assignment change
       const select = tr.querySelector('.module-select-dropdown');
       select.addEventListener('change', (e) => {
         course.assignedModuleId = e.target.value;
@@ -600,15 +685,14 @@
 
     if (!name) return;
 
-    // Read checked possible modules
-    const checkedCheckboxes = elements.possibleModulesCheckboxGrid.querySelectorAll('input[type="checkbox"]:checked');
-    const possibleModuleIds = Array.from(checkedCheckboxes).map(cb => cb.value);
+    // Read chosen possible modules
+    const possibleModuleIds = [...state.formPossibleModuleIds];
 
     // Default active assignment is the first possible module (or unassigned)
     const defaultAssignment = possibleModuleIds.length > 0 ? possibleModuleIds[0] : '';
 
     const newCourse = {
-      id: `course-${Date.now()}`,
+      id: `course-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       name: name,
       lp: lp,
       grade: grade,
@@ -622,9 +706,9 @@
     elements.inputCourseName.value = '';
     elements.inputCourseLp.value = '5';
     elements.inputCourseGrade.value = '';
-    elements.possibleModulesCheckboxGrid.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-      cb.checked = false;
-    });
+    elements.inputModuleSearch.value = '';
+    state.formPossibleModuleIds = [];
+    renderFormSelectedTags();
 
     render();
   }
@@ -881,7 +965,26 @@
       });
     });
 
-    // Add course form
+    // Add module to form button
+    elements.btnAddPossibleModule.addEventListener('click', () => {
+      const val = elements.inputModuleSearch.value.trim();
+      const mod = findModuleBySearchText(val);
+      if (mod) {
+        addModuleToFormSelection(mod.id);
+      } else if (val) {
+        alert(`Kein passendes Modul für "${val}" gefunden. Bitte einen Vorschlag aus der Liste wählen.`);
+      }
+    });
+
+    // Enter key in module search input adds module
+    elements.inputModuleSearch.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        elements.btnAddPossibleModule.click();
+      }
+    });
+
+    // Add course form submit
     elements.addCourseForm.addEventListener('submit', handleAddCourse);
 
     // Reset button
@@ -890,6 +993,8 @@
         state.pflichtCompletedIds.clear();
         state.pflichtGrades = {};
         state.loggedCourses = [];
+        state.formPossibleModuleIds = [];
+        renderFormSelectedTags();
         render();
       }
     });
