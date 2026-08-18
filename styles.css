@@ -247,10 +247,6 @@ body {
   border-bottom: none;
 }
 
-.modul-table tbody tr:hover {
-  background-color: #f8fafc;
-}
-
 /* Checked / Completed row styling */
 .modul-table tr.is-completed {
   background-color: var(--color-success-bg);

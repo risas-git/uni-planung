@@ -211,7 +211,6 @@
                    min="1.0" 
                    max="5.0" 
                    class="grade-input" 
-                   placeholder="z.B. 1.7" 
                    value="${currentGrade}" 
                    data-id="${escapeHtml(mod.id)}" 
                    title="Note für ${escapeHtml(mod.name)} eintragen">
