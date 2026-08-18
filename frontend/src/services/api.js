@@ -315,7 +315,20 @@ export const apiService = {
 
         if (cols.length >= 2) {
           const cName = cols[0] ? cols[0].trim() : '';
-          if (!cName || cName.includes('Gesamtschnitt') || cName.includes('Gesamtfortschritt')) continue;
+          const lowerName = cName.toLowerCase();
+          const isSummaryLine = [
+            'gesamtschnitt',
+            'gesamtfortschritt',
+            'pflichtbereich lp',
+            'pflichtbereich',
+            'wahlpflicht lp',
+            'mike lp',
+            'strukturierte ergaenzung',
+            'strukturierte ergänzung',
+            'abgeschlossene lp'
+          ].some(key => lowerName.includes(key));
+
+          if (!cName || isSummaryLine) continue;
 
           const cSem = cols[1] ? cols[1].trim() : '4. Sem.';
           const cLp = cols[2] ? parseInt(cols[2], 10) || 5 : 5;

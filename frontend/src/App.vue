@@ -1,13 +1,13 @@
 <template>
   <v-app class="bg-slate-50">
     <v-main>
-      <v-container class="py-6 px-4" style="max-width: 1200px;">
+      <v-container class="py-4 px-3 px-sm-4" style="max-width: 1360px;">
         
         <!-- Page Header Card -->
-        <v-card variant="outlined" class="mb-6 rounded-lg elevation-1 bg-white" style="border-color: #cbd5e1;">
-          <v-card-item class="pa-5">
+        <v-card variant="outlined" class="mb-5 rounded-lg elevation-1 bg-white" style="border-color: #cbd5e1;">
+          <v-card-item class="pa-4 pa-sm-5">
             <!-- Header Top Bar -->
-            <div class="d-flex justify-space-between align-start flex-wrap ga-4 pb-4 border-b">
+            <div class="d-flex justify-space-between align-start flex-wrap ga-3 pb-3 border-b">
               <div>
                 <div class="text-caption font-weight-bold text-uppercase text-grey-darken-1 tracking-wide">
                   Universität Bielefeld &bull; Technische Fakultät
@@ -79,17 +79,17 @@
               type="info"
               variant="tonal"
               density="compact"
-              class="my-4 text-caption rounded"
+              class="my-3 text-caption rounded"
               icon="mdi-shield-check-outline"
             >
               <strong>Datenschutzhinweis:</strong> Deine eingegebenen Daten werden aus Datenschutzgründen nicht auf Servern oder im Browser gespeichert. Du kannst deine Daten jederzeit über <strong>„Excel Export“</strong> als CSV-Datei sichern und bei deinem nächsten Besuch über <strong>„Excel Import“</strong> wieder einladen, um nahtlos weiterzuarbeiten.
             </v-alert>
 
             <!-- Metrics Summary Cards -->
-            <v-row dense class="mt-2">
+            <v-row dense class="mt-1">
               <!-- GPA -->
               <v-col cols="6" sm="4" md="2">
-                <v-card variant="flat" class="bg-grey-lighten-4 pa-3 rounded text-center fill-height">
+                <v-card variant="flat" class="bg-grey-lighten-4 pa-2 pa-sm-3 rounded text-center fill-height">
                   <div class="text-caption font-weight-bold text-grey-darken-1 text-uppercase">Gesamtschnitt</div>
                   <div class="text-h5 font-weight-bold text-info my-1">{{ stats.overallGpa || '-' }}</div>
                   <div class="text-caption text-grey-darken-1">{{ stats.totalGradedLp || 0 }} LP benotet</div>
@@ -98,7 +98,7 @@
 
               <!-- Total Progress -->
               <v-col cols="6" sm="4" md="2">
-                <v-card variant="flat" class="bg-grey-lighten-4 pa-3 rounded text-center fill-height">
+                <v-card variant="flat" class="bg-grey-lighten-4 pa-2 pa-sm-3 rounded text-center fill-height">
                   <div class="text-caption font-weight-bold text-grey-darken-1 text-uppercase">Gesamt</div>
                   <div class="text-h5 font-weight-bold text-primary my-1">
                     {{ stats.totalDegreeLp || 0 }} <span class="text-caption font-weight-normal text-grey">/ 180 LP</span>
@@ -109,7 +109,7 @@
 
               <!-- Pflichtbereich -->
               <v-col cols="6" sm="4" md="2">
-                <v-card variant="flat" class="bg-grey-lighten-4 pa-3 rounded text-center fill-height">
+                <v-card variant="flat" class="bg-grey-lighten-4 pa-2 pa-sm-3 rounded text-center fill-height">
                   <div class="text-caption font-weight-bold text-grey-darken-1 text-uppercase">Pflichtbereich</div>
                   <div class="text-h5 font-weight-bold text-primary my-1">
                     {{ stats.pflichtLp || 0 }} <span class="text-caption font-weight-normal text-grey">/ 120 LP</span>
@@ -120,7 +120,7 @@
 
               <!-- Wahlpflicht -->
               <v-col cols="6" sm="4" md="2">
-                <v-card variant="flat" class="bg-grey-lighten-4 pa-3 rounded text-center fill-height">
+                <v-card variant="flat" class="bg-grey-lighten-4 pa-2 pa-sm-3 rounded text-center fill-height">
                   <div class="text-caption font-weight-bold text-grey-darken-1 text-uppercase">Wahlpflicht</div>
                   <div class="text-h5 font-weight-bold my-1" :class="stats.wpLp >= 20 ? 'text-success' : 'text-primary'">
                     {{ stats.wpLp || 0 }} <span class="text-caption font-weight-normal text-grey">/ 20 LP</span>
@@ -131,7 +131,7 @@
 
               <!-- MiKE -->
               <v-col cols="6" sm="4" md="2">
-                <v-card variant="flat" class="bg-grey-lighten-4 pa-3 rounded text-center fill-height">
+                <v-card variant="flat" class="bg-grey-lighten-4 pa-2 pa-sm-3 rounded text-center fill-height">
                   <div class="text-caption font-weight-bold text-grey-darken-1 text-uppercase">MiKE / Indiv.</div>
                   <div class="text-h5 font-weight-bold my-1" :class="stats.mikeLp >= 10 ? 'text-success' : 'text-primary'">
                     {{ stats.mikeLp || 0 }} <span class="text-caption font-weight-normal text-grey">/ 10 LP</span>
@@ -142,7 +142,7 @@
 
               <!-- Strukturierte Ergänzung -->
               <v-col cols="6" sm="4" md="2">
-                <v-card variant="flat" class="bg-grey-lighten-4 pa-3 rounded text-center fill-height">
+                <v-card variant="flat" class="bg-grey-lighten-4 pa-2 pa-sm-3 rounded text-center fill-height">
                   <div class="text-caption font-weight-bold text-grey-darken-1 text-uppercase">Strukt. Erg.</div>
                   <div class="text-h5 font-weight-bold my-1" :class="stats.seLp >= 30 ? 'text-success' : 'text-primary'">
                     {{ stats.seLp || 0 }} <span class="text-caption font-weight-normal text-grey">/ 30 LP</span>
@@ -154,46 +154,46 @@
           </v-card-item>
         </v-card>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs (Compact & Responsive with Grow) -->
         <v-tabs
           v-model="activeTab"
           color="primary"
-          align-tabs="start"
-          class="mb-6 bg-white rounded-t-lg border-b"
+          grow
+          class="mb-5 bg-white rounded-t-lg border-b main-nav-tabs elevation-1"
           density="comfortable"
         >
-          <v-tab value="pflicht" class="font-weight-bold text-none">
+          <v-tab value="pflicht" class="font-weight-bold text-none px-2 px-md-3">
             Pflichtbereich
-            <v-chip size="x-small" class="ms-2 font-weight-bold" variant="tonal" color="primary">
-              {{ stats.pflichtLp || 0 }}/120 LP
+            <v-chip size="x-small" class="ms-1 font-weight-bold" variant="tonal" color="primary">
+              {{ stats.pflichtLp || 0 }}/120
             </v-chip>
           </v-tab>
 
-          <v-tab value="wahlpflicht" class="font-weight-bold text-none">
-            Wahlpflichtbereich
-            <v-chip size="x-small" class="ms-2 font-weight-bold" variant="tonal" :color="stats.wpLp >= 20 ? 'success' : 'primary'">
-              {{ stats.wpLp || 0 }}/20 LP
+          <v-tab value="wahlpflicht" class="font-weight-bold text-none px-2 px-md-3">
+            Wahlpflicht
+            <v-chip size="x-small" class="ms-1 font-weight-bold" variant="tonal" :color="stats.wpLp >= 20 ? 'success' : 'primary'">
+              {{ stats.wpLp || 0 }}/20
             </v-chip>
           </v-tab>
 
-          <v-tab value="mike" class="font-weight-bold text-none">
-            Individuelle Ergänzung (MiKE)
-            <v-chip size="x-small" class="ms-2 font-weight-bold" variant="tonal" :color="stats.mikeLp >= 10 ? 'success' : 'primary'">
-              {{ stats.mikeLp || 0 }}/10 LP
+          <v-tab value="mike" class="font-weight-bold text-none px-2 px-md-3">
+            MiKE
+            <v-chip size="x-small" class="ms-1 font-weight-bold" variant="tonal" :color="stats.mikeLp >= 10 ? 'success' : 'primary'">
+              {{ stats.mikeLp || 0 }}/10
             </v-chip>
           </v-tab>
 
-          <v-tab value="ergaenzung" class="font-weight-bold text-none">
-            Strukturierte Ergänzung
-            <v-chip size="x-small" class="ms-2 font-weight-bold" variant="tonal" :color="stats.seLp >= 30 ? 'success' : 'primary'">
-              {{ stats.seLp || 0 }}/30 LP
+          <v-tab value="ergaenzung" class="font-weight-bold text-none px-2 px-md-3">
+            Strukt. Ergänzung
+            <v-chip size="x-small" class="ms-1 font-weight-bold" variant="tonal" :color="stats.seLp >= 30 ? 'success' : 'primary'">
+              {{ stats.seLp || 0 }}/30
             </v-chip>
           </v-tab>
 
-          <v-tab value="courses" class="font-weight-bold text-none">
-            Veranstaltungen & Zuordnungen
-            <v-chip size="x-small" class="ms-2 font-weight-bold" variant="tonal" color="secondary">
-              {{ state.loggedCourses.length }} Kurse
+          <v-tab value="courses" class="font-weight-bold text-none px-2 px-md-3">
+            Veranstaltungen
+            <v-chip size="x-small" class="ms-1 font-weight-bold" variant="tonal" color="secondary">
+              {{ state.loggedCourses.length }}
             </v-chip>
           </v-tab>
         </v-tabs>

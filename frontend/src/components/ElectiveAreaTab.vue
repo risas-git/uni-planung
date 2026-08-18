@@ -24,19 +24,19 @@
         </div>
       </v-card-item>
 
-      <!-- Elective Modules Table -->
-      <v-table density="comfortable" hover>
+      <!-- Elective Modules Table (Optimized Layout without horizontal scrolling) -->
+      <v-table density="compact" hover class="elective-table">
         <thead>
           <tr class="bg-grey-lighten-5 text-uppercase text-caption font-weight-bold text-grey-darken-2">
-            <th style="width: 140px;">Kürzel</th>
-            <th style="min-width: 240px;">Modulbezeichnung</th>
-            <th class="text-center" style="width: 110px;">Typ</th>
-            <th class="text-center" style="width: 80px;">Soll LP</th>
-            <th class="text-center" style="width: 80px;">Belegt</th>
-            <th style="min-width: 250px;">Zugeordnete Veranstaltungen</th>
-            <th class="text-center" style="width: 110px;">Prüfung</th>
-            <th class="text-center" style="width: 80px;">Schnitt</th>
-            <th class="text-center" style="width: 130px;">Status</th>
+            <th style="width: 125px;" class="px-2">Kürzel</th>
+            <th class="px-2">Modulbezeichnung</th>
+            <th class="text-center px-1" style="width: 80px;">Typ</th>
+            <th class="text-center px-1" style="width: 50px;">Soll</th>
+            <th class="text-center px-1" style="width: 55px;">Belegt</th>
+            <th class="px-2" style="min-width: 160px;">Zugeordnete Veranstaltungen</th>
+            <th class="text-center px-1" style="width: 65px;">Prüfung</th>
+            <th class="text-center px-1" style="width: 60px;">Schnitt</th>
+            <th class="text-center px-2" style="width: 90px;">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -206,5 +206,15 @@ function getAverageGrade(modId) {
 }
 :deep(.v-table) {
   background: #ffffff !important;
+}
+:deep(.elective-table table) {
+  table-layout: auto;
+  width: 100%;
+}
+:deep(.elective-table th),
+:deep(.elective-table td) {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  font-size: 0.8125rem !important;
 }
 </style>

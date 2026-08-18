@@ -179,7 +179,18 @@ public class CsvExportImportService {
 
                 if (cols.size() >= 2) {
                     String cName = safeGet(cols, cNameIdx);
-                    if (cName.isEmpty() || cName.contains("Gesamtschnitt") || cName.contains("Gesamtfortschritt")) continue;
+                    String lowerName = cName.toLowerCase();
+                    if (cName.isEmpty() || 
+                        lowerName.contains("gesamtschnitt") || 
+                        lowerName.contains("gesamtfortschritt") ||
+                        lowerName.contains("pflichtbereich lp") ||
+                        lowerName.contains("wahlpflicht lp") ||
+                        lowerName.contains("mike lp") ||
+                        lowerName.contains("strukturierte ergaenzung") ||
+                        lowerName.contains("strukturierte ergänzung") ||
+                        lowerName.contains("abgeschlossene lp")) {
+                        continue;
+                    }
 
                     String cSem = safeGet(cols, cSemIdx);
                     if (cSem.isEmpty()) cSem = "4. Sem.";

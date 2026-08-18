@@ -134,16 +134,16 @@
         </div>
       </v-card-item>
 
-      <v-table density="comfortable" hover>
+      <v-table density="compact" hover class="course-table">
         <thead>
           <tr class="bg-grey-lighten-5 text-uppercase text-caption font-weight-bold text-grey-darken-2">
-            <th style="min-width: 220px;">Veranstaltung</th>
-            <th class="text-center" style="width: 120px;">Semester</th>
-            <th class="text-center" style="width: 70px;">LP</th>
-            <th class="text-center" style="width: 90px;">Note</th>
-            <th style="min-width: 280px;">Mögliche Module (Klick zum Aktivieren)</th>
-            <th style="min-width: 220px;">Aktive Zuordnung</th>
-            <th class="text-center" style="width: 80px;">Aktion</th>
+            <th class="px-2" style="min-width: 160px;">Veranstaltung</th>
+            <th class="text-center px-1" style="width: 95px;">Semester</th>
+            <th class="text-center px-1" style="width: 45px;">LP</th>
+            <th class="text-center px-1" style="width: 75px;">Note</th>
+            <th class="px-2" style="min-width: 160px;">Mögliche Module (Klick zum Aktivieren)</th>
+            <th class="px-2" style="width: 200px;">Aktive Zuordnung</th>
+            <th class="text-center px-1" style="width: 48px;">Aktion</th>
           </tr>
         </thead>
         <tbody>
@@ -374,6 +374,16 @@ function getAllocationOptions(course) {
 }
 .module-pill:hover {
   filter: brightness(0.95);
+}
+:deep(.course-table table) {
+  table-layout: auto;
+  width: 100%;
+}
+:deep(.course-table th),
+:deep(.course-table td) {
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+  font-size: 0.8125rem !important;
 }
 :deep(.grade-input input) {
   text-align: center;

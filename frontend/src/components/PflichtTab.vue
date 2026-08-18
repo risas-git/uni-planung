@@ -27,10 +27,10 @@
       </v-card-item>
 
       <!-- Semester Module Table -->
-      <v-table density="comfortable" hover>
+      <v-table density="compact" hover class="pflicht-table">
         <thead>
           <tr class="bg-grey-lighten-5 text-uppercase text-caption font-weight-bold text-grey-darken-2">
-            <th style="width: 54px;" class="text-center">
+            <th style="width: 44px;" class="text-center px-1">
               <v-checkbox-btn
                 :model-value="getSemesterCompletion(sem).isDone"
                 color="success"
@@ -40,15 +40,15 @@
                 @update:model-value="toggleAllInSemester(sem, $event)"
               />
             </th>
-            <th style="width: 140px;">Kürzel</th>
-            <th style="min-width: 250px;">Bezeichnung</th>
-            <th class="text-center" style="width: 70px;">LP</th>
-            <th class="text-center" style="width: 100px;">Empf. Beginn</th>
-            <th class="text-center" style="width: 90px;">Bindung</th>
-            <th class="text-center" style="width: 60px;">SL</th>
-            <th class="text-center" style="width: 60px;">bPr</th>
-            <th class="text-center" style="width: 60px;">uPr</th>
-            <th class="text-center" style="width: 110px;">Note</th>
+            <th style="width: 125px;" class="px-2">Kürzel</th>
+            <th class="px-2">Bezeichnung</th>
+            <th class="text-center px-1" style="width: 50px;">LP</th>
+            <th class="text-center px-1" style="width: 80px;">Empf.</th>
+            <th class="text-center px-1" style="width: 70px;">Bindung</th>
+            <th class="text-center px-1" style="width: 45px;">SL</th>
+            <th class="text-center px-1" style="width: 45px;">bPr</th>
+            <th class="text-center px-1" style="width: 45px;">uPr</th>
+            <th class="text-center px-2" style="width: 85px;">Note</th>
           </tr>
         </thead>
         <tbody>
@@ -200,6 +200,16 @@ function getSemesterCompletion(sem) {
 }
 :deep(.v-table) {
   background: #ffffff !important;
+}
+:deep(.pflicht-table table) {
+  table-layout: auto;
+  width: 100%;
+}
+:deep(.pflicht-table th),
+:deep(.pflicht-table td) {
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+  font-size: 0.8125rem !important;
 }
 :deep(.grade-input input) {
   text-align: center;
