@@ -1,13 +1,13 @@
 /**
  * Uni-Planung: KI & Kognitive Informatik (Uni Bielefeld)
  * Simplified In-Memory Pflichtbereich Planner with Weighted Grade Calculation
- * Note: Data is kept strictly in-memory during the active browser session and not persisted to disk.
+ * Includes Excel (.csv) Export and Import capabilities.
  */
 
 (function () {
   'use strict';
 
-  // Clear any existing localStorage data for privacy
+  // Clear any legacy localStorage data for privacy
   try {
     localStorage.removeItem('bielefeld_ki_study_progress_v1');
     localStorage.removeItem('bielefeld_ki_custom_modules_v1');
@@ -15,7 +15,7 @@
     localStorage.removeItem('bielefeld_ki_pflicht_completed_v2');
     localStorage.removeItem('bielefeld_ki_pflicht_grades_v2');
   } catch (e) {
-    // Ignore if storage is inaccessible
+    // Ignore
   }
 
   // Application State (In-Memory Only)
@@ -33,7 +33,10 @@
     completedModulesSubtext: document.getElementById('completedModulesSubtext'),
     openLpText: document.getElementById('openLpText'),
     openModulesSubtext: document.getElementById('openModulesSubtext'),
-    resetBtn: document.getElementById('resetBtn')
+    resetBtn: document.getElementById('resetBtn'),
+    exportExcelBtn: document.getElementById('exportExcelBtn'),
+    importExcelBtn: document.getElementById('importExcelBtn'),
+    fileInput: document.getElementById('fileInput')
   };
 
   // Initialization
@@ -267,14 +270,233 @@
     });
   }
 
+  // ==========================================
+  // EXCEL (.CSV) EXPORT & IMPORT
+  // ==========================================
+
+  // Export current table as Excel-compatible CSV file
+  function exportToExcel() {
+    const allModules = getAllPflichtModules();
+    const stats = calculateStats();
+
+    // Excel CSV format header (using semicolon for German Excel compatibility)
+    const header = [
+      'Fachsemester',
+      'Kuerzel',
+      'Bezeichnung',
+      'LP',
+      'Empf_Beginn',
+      'Bindung',
+      'SL',
+      'bPr',
+      'uPr',
+      'Status',
+      'Note'
+    ];
+
+    const rows = [header.join(';')];
+
+    PFLICHT_SEMESTERS.forEach(sem => {
+      sem.modules.forEach(mod => {
+        const isDone = state.completedModuleIds.has(mod.id);
+        const statusText = isDone ? 'Abgeschlossen' : 'Offen';
+        const gradeVal = state.grades[mod.id] !== undefined ? String(state.grades[mod.id]).replace('.', ',') : '';
+
+        const rowData = [
+          `"${sem.title}"`,
+          `"${mod.code}"`,
+          `"${mod.name.replace(/"/g, '""')}"`,
+          mod.lp,
+          `"${mod.semester}"`,
+          `"${mod.binding}"`,
+          `"${mod.sl}"`,
+          `"${mod.bPr}"`,
+          `"${mod.uPr}"`,
+          `"${statusText}"`,
+          `"${gradeVal}"`
+        ];
+
+        rows.push(rowData.join(';'));
+      });
+    });
+
+    // Add empty row and summary metadata
+    rows.push('');
+    rows.push(`"Notendurchschnitt (gewichtet)";"${stats.averageGrade}"`);
+    rows.push(`"Abgeschlossene LP";"${stats.completedLp} / ${stats.totalLp} LP"`);
+
+    // UTF-8 BOM (\uFEFF) ensures Excel automatically recognizes UTF-8 (Umlauts like ä, ö, ü)
+    const csvContent = '\uFEFF' + rows.join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10);
+    const fileName = `Studienplan_KI_Bielefeld_${dateStr}.csv`;
+
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // Import Excel (.csv / .json / .txt) file
+  function handleFileImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const text = e.target.result;
+
+        // Check if JSON format
+        if (text.trim().startsWith('{')) {
+          const json = JSON.parse(text);
+          if (json.completedModuleIds) {
+            state.completedModuleIds = new Set(json.completedModuleIds);
+          }
+          if (json.grades) {
+            state.grades = json.grades;
+          }
+          render();
+          alert('Daten erfolgreich importiert.');
+          return;
+        }
+
+        // CSV parsing
+        const lines = text.split(/\r\n|\n|\r/).filter(line => line.trim().length > 0);
+        if (lines.length <= 1) {
+          alert('Die ausgewählte Datei enthält keine Daten.');
+          return;
+        }
+
+        // Detect delimiter (semicolon or comma or tab)
+        const firstLine = lines[0];
+        let delimiter = ';';
+        if (firstLine.includes(';') === false && firstLine.includes(',')) {
+          delimiter = ',';
+        } else if (firstLine.includes('\t')) {
+          delimiter = '\t';
+        }
+
+        // Determine column indexes from header
+        const headerCols = parseCsvLine(firstLine, delimiter).map(c => c.toLowerCase().trim());
+        const codeIdx = headerCols.findIndex(c => c.includes('kuerzel') || c.includes('kürzel') || c.includes('code'));
+        const statusIdx = headerCols.findIndex(c => c.includes('status'));
+        const gradeIdx = headerCols.findIndex(c => c.includes('note') || c.includes('grade'));
+        const nameIdx = headerCols.findIndex(c => c.includes('bezeichnung') || c.includes('name'));
+
+        const allModules = getAllPflichtModules();
+        let importedCount = 0;
+
+        for (let i = 1; i < lines.length; i++) {
+          const cols = parseCsvLine(lines[i], delimiter);
+          if (cols.length === 0) continue;
+
+          const rowCode = codeIdx >= 0 ? cols[codeIdx].trim() : '';
+          const rowName = nameIdx >= 0 ? cols[nameIdx].trim() : '';
+          const rowStatus = statusIdx >= 0 ? cols[statusIdx].trim().toLowerCase() : '';
+          const rowGrade = gradeIdx >= 0 ? cols[gradeIdx].trim().replace(',', '.') : '';
+
+          // Find matching module by code or name
+          const matchedMod = allModules.find(m => 
+            (rowCode && m.code.toLowerCase() === rowCode.toLowerCase()) ||
+            (rowCode && m.id.toLowerCase() === rowCode.toLowerCase()) ||
+            (rowName && m.name.toLowerCase() === rowName.toLowerCase())
+          );
+
+          if (matchedMod) {
+            // Check status
+            const isCompleted = rowStatus.includes('abgeschlossen') || 
+                                rowStatus.includes('erledigt') || 
+                                rowStatus.includes('bestanden') || 
+                                rowStatus === '1' || 
+                                rowStatus === 'true' || 
+                                rowStatus === 'ja' || 
+                                rowStatus === 'x';
+
+            if (isCompleted) {
+              state.completedModuleIds.add(matchedMod.id);
+            }
+
+            // Check grade
+            if (rowGrade !== '' && !isNaN(parseFloat(rowGrade))) {
+              const numGrade = parseFloat(rowGrade);
+              if (numGrade >= 1.0 && numGrade <= 5.0) {
+                state.grades[matchedMod.id] = numGrade;
+                if (numGrade <= 4.0) {
+                  state.completedModuleIds.add(matchedMod.id);
+                }
+              }
+            }
+
+            importedCount++;
+          }
+        }
+
+        render();
+        alert(`Erfolg: ${importedCount} Module aus der Datei importiert.`);
+      } catch (err) {
+        console.error('Import error:', err);
+        alert('Fehler beim Einlesen der Datei: ' + err.message);
+      } finally {
+        event.target.value = '';
+      }
+    };
+
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  // Parse a single CSV line respecting quotes
+  function parseCsvLine(line, delimiter) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === delimiter && !inQuotes) {
+        result.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current);
+    return result;
+  }
+
   // Event Listeners
   function setupEventListeners() {
     // Reset inputs in current session
     elements.resetBtn.addEventListener('click', () => {
-      state.completedModuleIds.clear();
-      state.grades = {};
-      render();
+      if (confirm('Möchtest du alle Eingaben im aktuellen Tab zurücksetzen?')) {
+        state.completedModuleIds.clear();
+        state.grades = {};
+        render();
+      }
     });
+
+    // Excel Export
+    elements.exportExcelBtn.addEventListener('click', exportToExcel);
+
+    // Excel Import
+    elements.importExcelBtn.addEventListener('click', () => {
+      elements.fileInput.click();
+    });
+
+    elements.fileInput.addEventListener('change', handleFileImport);
   }
 
   // Utility to escape HTML
