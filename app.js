@@ -346,15 +346,22 @@
       section.innerHTML = `
         <div class="section-header">
           <h2 class="section-title">${escapeHtml(sem.title)}</h2>
-          <span class="section-lp-badge ${isSemFullyDone ? 'done' : ''}">
-            ${semCompletedLp} / ${semTotalLp} LP abgeschlossen
-          </span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="section-lp-badge ${isSemFullyDone ? 'done' : ''}">
+              ${semCompletedLp} / ${semTotalLp} LP abgeschlossen
+            </span>
+          </div>
         </div>
         <div class="table-responsive">
           <table class="modul-table">
             <thead>
               <tr>
-                <th class="col-check" title="Erledigt">Status</th>
+                <th class="col-check" title="Alle Module in diesem Semester als erledigt markieren / abwählen">
+                  <input type="checkbox" 
+                         class="checkbox-input select-all-sem-checkbox" 
+                         ${isSemFullyDone ? 'checked' : ''} 
+                         aria-label="Alle Module im ${escapeHtml(sem.title)} auswählen">
+                </th>
                 <th class="col-code">Kürzel</th>
                 <th class="col-name">Bezeichnung</th>
                 <th class="col-lp" title="Leistungspunkte">LP</th>
@@ -374,6 +381,22 @@
       `;
 
       const tbody = section.querySelector('tbody');
+
+      // Select All in Semester Listener
+      const selectAllCb = section.querySelector('.select-all-sem-checkbox');
+      if (selectAllCb) {
+        selectAllCb.addEventListener('change', (e) => {
+          const shouldCheck = e.target.checked;
+          sem.modules.forEach(m => {
+            if (shouldCheck) {
+              state.pflichtCompletedIds.add(m.id);
+            } else {
+              state.pflichtCompletedIds.delete(m.id);
+            }
+          });
+          render();
+        });
+      }
 
       sem.modules.forEach(mod => {
         const isDone = state.pflichtCompletedIds.has(mod.id);
@@ -612,6 +635,10 @@
             <option value="4. Sem." ${course.semester === '4. Sem.' || !course.semester ? 'selected' : ''}>4. Sem.</option>
             <option value="5. Sem." ${course.semester === '5. Sem.' ? 'selected' : ''}>5. Sem.</option>
             <option value="6. Sem." ${course.semester === '6. Sem.' ? 'selected' : ''}>6. Sem.</option>
+            <option value="7. Sem." ${course.semester === '7. Sem.' ? 'selected' : ''}>7. Sem.</option>
+            <option value="8. Sem." ${course.semester === '8. Sem.' ? 'selected' : ''}>8. Sem.</option>
+            <option value="9. Sem." ${course.semester === '9. Sem.' ? 'selected' : ''}>9. Sem.</option>
+            <option value="10. Sem." ${course.semester === '10. Sem.' ? 'selected' : ''}>10. Sem.</option>
           </select>
         </td>
         <td class="col-lp">${course.lp}</td>
