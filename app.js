@@ -1,6 +1,6 @@
 /**
  * Uni-Planung: KI & Kognitive Informatik (Uni Bielefeld)
- * Multi-Area Degree Planner with Searchable Module Picker and 1-Click Pill Allocation
+ * Multi-Area Degree Planner with Searchable Module Picker, Semester Logging, and 1-Click Pill Allocation
  * In-Memory Privacy Mode with Excel Export/Import.
  */
 
@@ -23,7 +23,7 @@
     activeTab: 'tab-pflicht',
     pflichtCompletedIds: new Set(),
     pflichtGrades: {}, // { [moduleId]: 1.3 }
-    loggedCourses: [], // Array of { id, name, lp, grade, possibleModuleIds: [], assignedModuleId: '' }
+    loggedCourses: [], // Array of { id, name, semester, lp, grade, possibleModuleIds: [], assignedModuleId: '' }
     formPossibleModuleIds: [] // Array of module IDs currently chosen in the "New Course" form
   };
 
@@ -66,6 +66,7 @@
     // Form elements
     addCourseForm: document.getElementById('addCourseForm'),
     inputCourseName: document.getElementById('inputCourseName'),
+    inputCourseSem: document.getElementById('inputCourseSem'),
     inputCourseLp: document.getElementById('inputCourseLp'),
     inputCourseGrade: document.getElementById('inputCourseGrade'),
     inputModuleSearch: document.getElementById('inputModuleSearch'),
@@ -498,7 +499,7 @@
       if (alloc.courses.length > 0) {
         assignedCoursesHtml = alloc.courses.map(c => `
           <div class="assigned-course-pill">
-            <span><strong>${escapeHtml(c.name)}</strong> (${c.lp} LP${c.grade ? ', Note: ' + c.grade : ''})</span>
+            <span><strong>${escapeHtml(c.name)}</strong> (${c.semester ? escapeHtml(c.semester) + ', ' : ''}${c.lp} LP${c.grade ? ', Note: ' + c.grade : ''})</span>
           </div>
         `).join('');
       }
@@ -543,7 +544,7 @@
     if (state.loggedCourses.length === 0) {
       elements.loggedCoursesTableBody.innerHTML = `
         <tr>
-          <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">
+          <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">
             Noch keine Lehrveranstaltungen erfasst. Nutze das obige Formular, um einen Kurs (z.B. "392180 Machine Learning Methods and Applications") hinzuzufügen.
           </td>
         </tr>
@@ -603,6 +604,16 @@
 
       tr.innerHTML = `
         <td class="col-name" style="font-weight: 600;">${escapeHtml(course.name)}</td>
+        <td class="col-sem">
+          <select class="form-control sem-change-dropdown" data-course-id="${escapeHtml(course.id)}" style="padding: 2px 4px; font-size: 0.775rem; width: 85px;">
+            <option value="1. Sem." ${course.semester === '1. Sem.' ? 'selected' : ''}>1. Sem.</option>
+            <option value="2. Sem." ${course.semester === '2. Sem.' ? 'selected' : ''}>2. Sem.</option>
+            <option value="3. Sem." ${course.semester === '3. Sem.' ? 'selected' : ''}>3. Sem.</option>
+            <option value="4. Sem." ${course.semester === '4. Sem.' || !course.semester ? 'selected' : ''}>4. Sem.</option>
+            <option value="5. Sem." ${course.semester === '5. Sem.' ? 'selected' : ''}>5. Sem.</option>
+            <option value="6. Sem." ${course.semester === '6. Sem.' ? 'selected' : ''}>6. Sem.</option>
+          </select>
+        </td>
         <td class="col-lp">${course.lp}</td>
         <td class="col-grade">
           <input type="number" 
@@ -639,6 +650,13 @@
           course.assignedModuleId = targetModId;
           render();
         });
+      });
+
+      // Listener for semester change
+      const semSelect = tr.querySelector('.sem-change-dropdown');
+      semSelect.addEventListener('change', (e) => {
+        course.semester = e.target.value;
+        render();
       });
 
       // Listener for dropdown assignment change
@@ -679,6 +697,7 @@
     e.preventDefault();
 
     const name = elements.inputCourseName.value.trim();
+    const semester = elements.inputCourseSem ? elements.inputCourseSem.value : '4. Sem.';
     const lp = parseInt(elements.inputCourseLp.value, 10) || 5;
     const gradeVal = elements.inputCourseGrade.value.trim().replace(',', '.');
     const grade = gradeVal !== '' && !isNaN(parseFloat(gradeVal)) ? parseFloat(gradeVal) : null;
@@ -694,6 +713,7 @@
     const newCourse = {
       id: `course-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       name: name,
+      semester: semester,
       lp: lp,
       grade: grade,
       possibleModuleIds: possibleModuleIds,
@@ -749,13 +769,14 @@
     // Section 2: Logged Courses & Allocations
     rows.push('');
     rows.push(['# Erfasste Lehrveranstaltungen & Modul-Zuordnungen'].join(';'));
-    rows.push(['Veranstaltungsname', 'LP', 'Note', 'Moegliche_Module_IDs', 'Zugeordnetes_Modul_ID'].join(';'));
+    rows.push(['Veranstaltungsname', 'Fachsemester', 'LP', 'Note', 'Moegliche_Module_IDs', 'Zugeordnetes_Modul_ID'].join(';'));
 
     state.loggedCourses.forEach(c => {
       const gradeStr = c.grade !== null ? String(c.grade).replace('.', ',') : '';
       const possibleStr = (c.possibleModuleIds || []).join('|');
       rows.push([
         `"${c.name.replace(/"/g, '""')}"`,
+        `"${c.semester || '4. Sem.'}"`,
         c.lp,
         `"${gradeStr}"`,
         `"${possibleStr}"`,
@@ -828,10 +849,11 @@
         let nameIdx = -1;
 
         let cNameIdx = 0;
-        let cLpIdx = 1;
-        let cGradeIdx = 2;
-        let cPossibleIdx = 3;
-        let cAssignedIdx = 4;
+        let cSemIdx = 1;
+        let cLpIdx = 2;
+        let cGradeIdx = 3;
+        let cPossibleIdx = 4;
+        let cAssignedIdx = 5;
 
         for (let i = 0; i < lines.length; i++) {
           const rawLine = lines[i].trim();
@@ -884,6 +906,18 @@
             // Second section: Logged Courses
             if (!loggedCoursesHeaderRead) {
               loggedCoursesHeaderRead = true;
+              const courseHeaders = cols.map(c => (c ? String(c).toLowerCase().trim() : ''));
+              cNameIdx = courseHeaders.findIndex(c => c.includes('name') || c.includes('veranstaltung'));
+              if (cNameIdx === -1) cNameIdx = 0;
+              cSemIdx = courseHeaders.findIndex(c => c.includes('sem'));
+              cLpIdx = courseHeaders.findIndex(c => c.includes('lp'));
+              if (cLpIdx === -1) cLpIdx = 2;
+              cGradeIdx = courseHeaders.findIndex(c => c.includes('note') || c.includes('grade'));
+              if (cGradeIdx === -1) cGradeIdx = 3;
+              cPossibleIdx = courseHeaders.findIndex(c => c.includes('moeglich') || c.includes('mögliche'));
+              if (cPossibleIdx === -1) cPossibleIdx = 4;
+              cAssignedIdx = courseHeaders.findIndex(c => c.includes('zugeordnet'));
+              if (cAssignedIdx === -1) cAssignedIdx = 5;
               continue;
             }
 
@@ -891,15 +925,17 @@
               const cName = cols[cNameIdx] ? String(cols[cNameIdx]).trim() : '';
               if (!cName || cName.includes('Gesamtschnitt') || cName.includes('Gesamtfortschritt')) continue;
 
-              const cLp = cols[cLpIdx] ? parseInt(cols[cLpIdx], 10) || 5 : 5;
-              const cGradeVal = cols[cGradeIdx] ? String(cols[cGradeIdx]).trim().replace(',', '.') : '';
+              const cSem = (cSemIdx >= 0 && cols[cSemIdx]) ? String(cols[cSemIdx]).trim() : '4. Sem.';
+              const cLp = (cLpIdx >= 0 && cols[cLpIdx]) ? parseInt(cols[cLpIdx], 10) || 5 : 5;
+              const cGradeVal = (cGradeIdx >= 0 && cols[cGradeIdx]) ? String(cols[cGradeIdx]).trim().replace(',', '.') : '';
               const cGrade = cGradeVal !== '' && !isNaN(parseFloat(cGradeVal)) ? parseFloat(cGradeVal) : null;
-              const cPossible = cols[cPossibleIdx] ? String(cols[cPossibleIdx]).split('|').filter(x => x.trim()) : [];
-              const cAssigned = cols[cAssignedIdx] ? String(cols[cAssignedIdx]).trim() : '';
+              const cPossible = (cPossibleIdx >= 0 && cols[cPossibleIdx]) ? String(cols[cPossibleIdx]).split('|').filter(x => x.trim()) : [];
+              const cAssigned = (cAssignedIdx >= 0 && cols[cAssignedIdx]) ? String(cols[cAssignedIdx]).trim() : '';
 
               state.loggedCourses.push({
                 id: `course-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
                 name: cName,
+                semester: cSem,
                 lp: cLp,
                 grade: cGrade,
                 possibleModuleIds: cPossible,

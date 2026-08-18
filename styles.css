@@ -112,6 +112,22 @@ body {
   align-items: center;
 }
 
+/* Privacy Notice Bar */
+.privacy-notice-bar {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  line-height: 1.45;
+}
+
+.privacy-notice-bar strong {
+  color: var(--text-main);
+}
+
 /* Key Metrics Box */
 .metrics-summary-bar {
   display: grid;
@@ -524,7 +540,7 @@ body {
 
 .form-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 2.2fr 1.2fr 0.8fr 0.8fr;
   gap: 12px;
   align-items: flex-end;
   margin-bottom: 16px;

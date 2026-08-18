@@ -30,6 +30,11 @@
         </div>
       </div>
 
+      <!-- Privacy & CSV Data Notice -->
+      <div class="privacy-notice-bar">
+        <strong>Datenschutzhinweis:</strong> Deine eingegebenen Daten werden aus Datenschutzgründen nicht auf Servern oder im Browser gespeichert. Du kannst deine Daten jederzeit über den Button <strong>„Excel Export“</strong> als CSV-Datei sichern und bei deinem nächsten Besuch über <strong>„Excel Import“</strong> wieder einladen, um nahtlos weiterzuarbeiten.
+      </div>
+
       <!-- Key Metrics & Average Grade Summary -->
       <div class="metrics-summary-bar">
         <div class="metric-stat-block">
@@ -212,7 +217,18 @@
               <input type="text" id="inputCourseName" class="form-control" placeholder="z.B. 392180 Machine Learning Methods and Applications (V)" required>
             </div>
             <div class="form-group">
-              <label class="form-label" for="inputCourseLp">Leistungspunkte (LP) *</label>
+              <label class="form-label" for="inputCourseSem">Fachsemester</label>
+              <select id="inputCourseSem" class="form-control">
+                <option value="1. Sem.">1. Semester</option>
+                <option value="2. Sem.">2. Semester</option>
+                <option value="3. Sem.">3. Semester</option>
+                <option value="4. Sem." selected>4. Semester</option>
+                <option value="5. Sem.">5. Semester</option>
+                <option value="6. Sem.">6. Semester</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="inputCourseLp">LP *</label>
               <input type="number" id="inputCourseLp" class="form-control" value="5" min="1" max="30" required>
             </div>
             <div class="form-group">
@@ -262,6 +278,7 @@
             <thead>
               <tr>
                 <th class="col-name">Veranstaltung</th>
+                <th class="col-sem">Semester</th>
                 <th class="col-lp">LP</th>
                 <th class="col-grade">Note</th>
                 <th>Mögliche Module (Klick zum Aktivieren)</th>
