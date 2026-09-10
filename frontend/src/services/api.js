@@ -10,39 +10,60 @@ const apiClient = axios.create({
 // Fallback embedded data in case backend server is starting up or offline
 import { PFLICHT_SEMESTERS_DATA, ELECTIVES_DATA } from './fallback-data.js';
 
+let isBackendAvailable = null;
+
 export const apiService = {
+  // Check if backend is reachable
+  isBackendOnline() {
+    return isBackendAvailable === true;
+  },
+
   // Fetch Pflicht semesters
   async getPflichtSemesters() {
+    if (isBackendAvailable === false) {
+      return PFLICHT_SEMESTERS_DATA;
+    }
     try {
       const response = await apiClient.get('/curriculum/pflicht');
+      isBackendAvailable = true;
       return response.data;
     } catch (err) {
-      console.warn('Backend offline, using fallback curriculum data:', err.message);
+      isBackendAvailable = false;
+      console.info('Running in standalone/browser mode (backend offline). Using local calculations.');
       return PFLICHT_SEMESTERS_DATA;
     }
   },
 
   // Fetch Elective catalogs (WP, MiKE, Strukturierte Ergänzung)
   async getElectiveCatalogs() {
+    if (isBackendAvailable === false) {
+      return ELECTIVES_DATA;
+    }
     try {
       const response = await apiClient.get('/curriculum/electives');
+      isBackendAvailable = true;
       return response.data;
     } catch (err) {
-      console.warn('Backend offline, using fallback electives catalog:', err.message);
+      isBackendAvailable = false;
       return ELECTIVES_DATA;
     }
   },
 
   // Calculate study plan stats (GPA, filled LP, progress)
   async calculatePlan(state) {
+    if (isBackendAvailable === false) {
+      return this.calculatePlanLocally(state);
+    }
     try {
       const response = await apiClient.post('/plan/calculate', {
         pflichtCompletedIds: Array.from(state.pflichtCompletedIds),
         pflichtGrades: state.pflichtGrades,
         loggedCourses: state.loggedCourses
       });
+      isBackendAvailable = true;
       return response.data;
     } catch (err) {
+      isBackendAvailable = false;
       // Local calculation fallback
       return this.calculatePlanLocally(state);
     }
@@ -50,6 +71,10 @@ export const apiService = {
 
   // Export to Excel CSV
   async exportCsv(state) {
+    if (isBackendAvailable === false) {
+      this.exportCsvLocally(state);
+      return;
+    }
     try {
       const response = await apiClient.post('/plan/export-csv', {
         pflichtCompletedIds: Array.from(state.pflichtCompletedIds),
