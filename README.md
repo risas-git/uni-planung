@@ -1,6 +1,9 @@
 # Uni-Planung: KI & Kognitive Informatik (B.Sc.) - Universität Bielefeld
 
-Full-Stack Studienplaner gebaut mit **Vue 3 + Vuetify 3** (Frontend) und **Java 21 / Spring Boot** (Backend).
+[![Live Webversion](https://img.shields.io/badge/🌐_Live_Webversion-Hier_klicken-2ea44f?style=for-the-badge)](https://risas-git.github.io/uni-planung/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-blue?style=for-the-badge&logo=github)](https://github.com/risas-git/uni-planung)
+
+Full-Stack Studienplaner gebaut mit **Vue 3 + Vuetify 3** (Frontend) und **Java 21 / Spring Boot** (Backend) für den Bachelorstudiengang *Künstliche Intelligenz und Kognitive Informatik* an der Universität Bielefeld.
 
 ---
 
@@ -8,12 +11,14 @@ Full-Stack Studienplaner gebaut mit **Vue 3 + Vuetify 3** (Frontend) und **Java 
 
 Die Anwendung ist als reine Webversion ohne Installation oder Server direkt im Browser erreichbar:
 
-👉 **[https://risas-git.github.io/uni-planung/](https://risas-git.github.io/uni-planung/)**
+🔗 **[https://risas-git.github.io/uni-planung/](https://risas-git.github.io/uni-planung/)**
 
-- **Keine Installation nötig**: Freunde und Kommilitonen können den Studienplaner direkt per Link öffnen.
+- **Keine Installation nötig**: Der Studienplaner kann direkt per Link im Browser geöffnet und genutzt werden.
 - **Vollständig Client-seitig**: Noten, Fortschritte und Berechnungen laufen komplett im Speicher des Browsers.
 - **Excel Export & Import**: Eingegebene Daten können jederzeit als `.csv` gesichert und wieder geladen werden.
 - **Automatisches Deployment**: Änderungen im `main`-Branch werden per GitHub Actions automatisch auf den `gh-pages`-Branch gebaut und aktualisiert.
+- **GitHub Repository**: [https://github.com/risas-git/uni-planung](https://github.com/risas-git/uni-planung)
+- **Offizielle FSB / eKVV**: [Studieninformation Universität Bielefeld](https://ekvv.uni-bielefeld.de/sinfo/publ/variante/405818172?m#405818181)
 
 ## 🚀 Schnellstart (Entwicklung)
 
