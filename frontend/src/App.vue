@@ -412,6 +412,7 @@ function handleUpdateCourse(updatedCourse) {
     state.loggedCourses[index] = updatedCourse;
   }
   recalculateStats();
+  showNotification('Veranstaltung erfolgreich aktualisiert.', 'success');
 }
 
 function handleReset() {

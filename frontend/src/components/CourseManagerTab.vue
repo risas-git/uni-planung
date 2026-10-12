@@ -1,15 +1,34 @@
 <template>
   <div class="course-manager-tab">
     <!-- Course Logger Card -->
-    <v-card variant="outlined" class="mb-6 rounded-lg elevation-1 pa-4 bg-white" style="border-color: #cbd5e1;">
-      <h3 class="text-h6 font-weight-bold text-primary mb-1">
-        Neue Lehrveranstaltung erfassen
-      </h3>
+    <v-card
+      ref="formCardRef"
+      variant="outlined"
+      class="mb-6 rounded-lg elevation-1 pa-4 bg-white"
+      :style="{ borderColor: editingCourseId ? '#1976d2' : '#cbd5e1', borderWidth: editingCourseId ? '2px' : '1px' }"
+    >
+      <div class="d-flex justify-space-between align-center flex-wrap ga-2 mb-1">
+        <h3 class="text-h6 font-weight-bold text-primary">
+          {{ editingCourseId ? 'Lehrveranstaltung bearbeiten' : 'Neue Lehrveranstaltung erfassen' }}
+        </h3>
+        <v-chip
+          v-if="editingCourseId"
+          color="warning"
+          variant="flat"
+          size="small"
+          class="font-weight-bold"
+        >
+          <v-icon icon="mdi-pencil" size="x-small" class="me-1" />
+          Bearbeitungsmodus
+        </v-chip>
+      </div>
       <p class="text-caption text-grey-darken-1 mb-4">
-        Erfasse besuchte Kurse/Vorlesungen, wähle über die Suche alle Module aus, für die dieser Kurs angerechnet werden kann, und lege ihn an.
+        {{ editingCourseId
+          ? 'Passe Name, Fachsemester, LP, Note oder die möglichen Module dieser Veranstaltung an und speichere die Änderungen.'
+          : 'Erfasse besuchte Kurse/Vorlesungen, wähle über die Suche alle Module aus, für die dieser Kurs angerechnet werden kann, und lege ihn an.' }}
       </p>
 
-      <v-form @submit.prevent="handleAddCourse">
+      <v-form @submit.prevent="handleSubmitCourse">
         <v-row dense>
           <!-- Course Name -->
           <v-col cols="12" md="5">
@@ -100,16 +119,25 @@
           </v-col>
         </v-row>
 
-        <div class="d-flex justify-end mt-4">
+        <div class="d-flex justify-end ga-2 mt-4">
+          <v-btn
+            v-if="editingCourseId"
+            variant="outlined"
+            color="grey-darken-1"
+            class="px-4 font-weight-bold"
+            @click="cancelEdit"
+          >
+            Abbrechen
+          </v-btn>
           <v-btn
             type="submit"
-            color="primary"
+            :color="editingCourseId ? 'success' : 'primary'"
             variant="flat"
             class="px-6 font-weight-bold"
             :disabled="!form.name.trim()"
           >
-            <v-icon icon="mdi-plus" class="me-1" />
-            Veranstaltung anlegen
+            <v-icon :icon="editingCourseId ? 'mdi-check' : 'mdi-plus'" class="me-1" />
+            {{ editingCourseId ? 'Änderungen speichern' : 'Veranstaltung anlegen' }}
           </v-btn>
         </div>
       </v-form>
@@ -143,7 +171,7 @@
             <th class="text-center px-1" style="width: 75px;">Note</th>
             <th class="px-2" style="min-width: 160px;">Mögliche Module (Klick zum Aktivieren)</th>
             <th class="px-2" style="width: 200px;">Aktive Zuordnung</th>
-            <th class="text-center px-1" style="width: 48px;">Aktion</th>
+            <th class="text-center px-1" style="width: 80px;">Aktionen</th>
           </tr>
         </thead>
         <tbody>
@@ -152,7 +180,11 @@
               Noch keine Lehrveranstaltungen erfasst. Nutze das obige Formular, um einen Kurs (z.B. "392180 Machine Learning Methods and Applications") hinzuzufügen.
             </td>
           </tr>
-          <tr v-for="c in courses" :key="c.id">
+          <tr
+            v-for="c in courses"
+            :key="c.id"
+            :class="{ 'bg-blue-lighten-5': editingCourseId === c.id }"
+          >
             <!-- Name -->
             <td class="font-weight-bold text-body-2">
               {{ c.name }}
@@ -234,16 +266,26 @@
               />
             </td>
 
-            <!-- Delete Button -->
+            <!-- Actions: Edit and Delete -->
             <td class="text-center">
-              <v-btn
-                icon="mdi-delete-outline"
-                size="small"
-                variant="text"
-                color="error"
-                title="Veranstaltung entfernen"
-                @click="deleteCourse(c.id)"
-              />
+              <div class="d-flex justify-center ga-1">
+                <v-btn
+                  icon="mdi-pencil-outline"
+                  size="small"
+                  variant="text"
+                  color="primary"
+                  title="Veranstaltung bearbeiten (oben im Formular öffnen)"
+                  @click="startEditCourse(c)"
+                />
+                <v-btn
+                  icon="mdi-delete-outline"
+                  size="small"
+                  variant="text"
+                  color="error"
+                  title="Veranstaltung entfernen"
+                  @click="deleteCourse(c.id)"
+                />
+              </div>
             </td>
           </tr>
         </tbody>
@@ -253,7 +295,7 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, ref, computed } from 'vue';
 
 const props = defineProps({
   courses: {
@@ -267,6 +309,9 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['add-course', 'delete-course', 'update-course']);
+
+const formCardRef = ref(null);
+const editingCourseId = ref(null);
 
 const semesterOptions = [
   '1. Sem.',
@@ -289,25 +334,67 @@ const form = reactive({
   possibleModuleIds: []
 });
 
-function handleAddCourse() {
+function handleSubmitCourse() {
   if (!form.name.trim()) return;
 
   const gradeVal = String(form.grade).trim().replace(',', '.');
   const grade = gradeVal && !isNaN(parseFloat(gradeVal)) ? parseFloat(gradeVal) : null;
   const possible = [...form.possibleModuleIds];
-  const assigned = possible.length > 0 ? possible[0] : '';
 
-  emit('add-course', {
-    id: `course-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-    name: form.name.trim(),
-    semester: form.semester,
-    lp: form.lp || 5,
-    grade: grade,
-    possibleModuleIds: possible,
-    assignedModuleId: assigned
-  });
+  if (editingCourseId.value) {
+    const existing = props.courses.find(c => c.id === editingCourseId.value);
+    let assigned = existing?.assignedModuleId || '';
+    if (possible.length > 0) {
+      if (!assigned || !possible.includes(assigned)) {
+        assigned = possible[0];
+      }
+    } else {
+      assigned = '';
+    }
 
-  // Reset form
+    emit('update-course', {
+      id: editingCourseId.value,
+      name: form.name.trim(),
+      semester: form.semester,
+      lp: form.lp || 5,
+      grade: grade,
+      possibleModuleIds: possible,
+      assignedModuleId: assigned
+    });
+
+    cancelEdit();
+  } else {
+    const assigned = possible.length > 0 ? possible[0] : '';
+    emit('add-course', {
+      id: `course-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      name: form.name.trim(),
+      semester: form.semester,
+      lp: form.lp || 5,
+      grade: grade,
+      possibleModuleIds: possible,
+      assignedModuleId: assigned
+    });
+
+    cancelEdit();
+  }
+}
+
+function startEditCourse(course) {
+  editingCourseId.value = course.id;
+  form.name = course.name;
+  form.semester = course.semester || '4. Sem.';
+  form.lp = course.lp || 5;
+  form.grade = course.grade !== null && course.grade !== undefined ? course.grade : '';
+  form.possibleModuleIds = Array.isArray(course.possibleModuleIds) ? [...course.possibleModuleIds] : [];
+
+  if (formCardRef.value) {
+    const el = formCardRef.value.$el || formCardRef.value;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function cancelEdit() {
+  editingCourseId.value = null;
   form.name = '';
   form.semester = '4. Sem.';
   form.lp = 5;

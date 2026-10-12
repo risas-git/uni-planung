@@ -24,7 +24,8 @@
     pflichtCompletedIds: new Set(),
     pflichtGrades: {}, // { [moduleId]: 1.3 }
     loggedCourses: [], // Array of { id, name, semester, lp, grade, possibleModuleIds: [], assignedModuleId: '' }
-    formPossibleModuleIds: [] // Array of module IDs currently chosen in the "New Course" form
+    formPossibleModuleIds: [], // Array of module IDs currently chosen in the "New Course" form
+    editingCourseId: null // ID of course currently being edited in form, or null
   };
 
   // DOM Elements
@@ -64,7 +65,13 @@
     loggedCoursesTableBody: document.getElementById('loggedCoursesTableBody'),
 
     // Form elements
+    courseLoggerCard: document.getElementById('courseLoggerCard'),
+    loggerCardTitle: document.getElementById('loggerCardTitle'),
+    loggerEditBadge: document.getElementById('loggerEditBadge'),
+    loggerCardDesc: document.getElementById('loggerCardDesc'),
     addCourseForm: document.getElementById('addCourseForm'),
+    btnCancelEditCourse: document.getElementById('btnCancelEditCourse'),
+    btnSubmitCourse: document.getElementById('btnSubmitCourse'),
     inputCourseName: document.getElementById('inputCourseName'),
     inputCourseSem: document.getElementById('inputCourseSem'),
     inputCourseLp: document.getElementById('inputCourseLp'),
@@ -80,6 +87,43 @@
     importExcelBtn: document.getElementById('importExcelBtn'),
     fileInput: document.getElementById('fileInput')
   };
+
+  // Switch form UI between Create and Edit modes
+  function updateFormEditModeUI() {
+    if (state.editingCourseId) {
+      if (elements.loggerCardTitle) elements.loggerCardTitle.textContent = 'Lehrveranstaltung bearbeiten';
+      if (elements.loggerEditBadge) elements.loggerEditBadge.style.display = 'inline-block';
+      if (elements.loggerCardDesc) elements.loggerCardDesc.textContent = 'Passe Name, Fachsemester, LP, Note oder die möglichen Module dieser Veranstaltung an und klicke auf Speichern.';
+      if (elements.btnCancelEditCourse) elements.btnCancelEditCourse.style.display = 'inline-block';
+      if (elements.btnSubmitCourse) elements.btnSubmitCourse.textContent = 'Änderungen speichern';
+      if (elements.courseLoggerCard) {
+        elements.courseLoggerCard.style.borderColor = '#1976d2';
+        elements.courseLoggerCard.style.borderWidth = '2px';
+      }
+    } else {
+      if (elements.loggerCardTitle) elements.loggerCardTitle.textContent = 'Neue Lehrveranstaltung erfassen';
+      if (elements.loggerEditBadge) elements.loggerEditBadge.style.display = 'none';
+      if (elements.loggerCardDesc) elements.loggerCardDesc.textContent = 'Erfasse besuchte Kurse/Vorlesungen, wähle über die Suche alle Module aus, für die dieser Kurs angerechnet werden kann, und lege ihn an.';
+      if (elements.btnCancelEditCourse) elements.btnCancelEditCourse.style.display = 'none';
+      if (elements.btnSubmitCourse) elements.btnSubmitCourse.textContent = 'Veranstaltung anlegen';
+      if (elements.courseLoggerCard) {
+        elements.courseLoggerCard.style.borderColor = '';
+        elements.courseLoggerCard.style.borderWidth = '';
+      }
+    }
+  }
+
+  function cancelEditCourse() {
+    state.editingCourseId = null;
+    elements.inputCourseName.value = '';
+    if (elements.inputCourseSem) elements.inputCourseSem.value = '4. Sem.';
+    elements.inputCourseLp.value = '5';
+    elements.inputCourseGrade.value = '';
+    elements.inputModuleSearch.value = '';
+    state.formPossibleModuleIds = [];
+    renderFormSelectedTags();
+    updateFormEditModeUI();
+  }
 
   // Initialization
   function init() {
@@ -662,12 +706,19 @@
             ${optionsHtml.join('')}
           </select>
         </td>
-        <td style="text-align: center;">
-          <button class="btn btn-danger btn-sm" data-action="delete-course" data-course-id="${escapeHtml(course.id)}" title="Veranstaltung entfernen">
+        <td style="text-align: center; white-space: nowrap;">
+          <button class="btn btn-sm" data-action="edit-course" data-course-id="${escapeHtml(course.id)}" title="Veranstaltung bearbeiten (oben im Formular öffnen)" style="margin-right: 4px; padding: 4px 8px; font-size: 0.75rem;">
+            ✎ Bearbeiten
+          </button>
+          <button class="btn btn-danger btn-sm" data-action="delete-course" data-course-id="${escapeHtml(course.id)}" title="Veranstaltung entfernen" style="padding: 4px 8px; font-size: 0.75rem;">
             Löschen
           </button>
         </td>
       `;
+
+      if (state.editingCourseId === course.id) {
+        tr.style.backgroundColor = 'rgba(25, 118, 210, 0.08)';
+      }
 
       // Listener for 1-click pill activation
       tr.querySelectorAll('[data-action="set-active-module"]').forEach(btn => {
@@ -708,9 +759,29 @@
         render();
       });
 
+      // Listener for editing course
+      const editBtn = tr.querySelector('[data-action="edit-course"]');
+      if (editBtn) {
+        editBtn.addEventListener('click', () => {
+          state.editingCourseId = course.id;
+          elements.inputCourseName.value = course.name;
+          if (elements.inputCourseSem) elements.inputCourseSem.value = course.semester || '4. Sem.';
+          elements.inputCourseLp.value = course.lp || 5;
+          elements.inputCourseGrade.value = course.grade !== null && course.grade !== undefined ? course.grade : '';
+          state.formPossibleModuleIds = Array.isArray(course.possibleModuleIds) ? [...course.possibleModuleIds] : [];
+          renderFormSelectedTags();
+          updateFormEditModeUI();
+          render();
+          elements.courseLoggerCard?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+
       // Listener for deleting course
       const deleteBtn = tr.querySelector('[data-action="delete-course"]');
       deleteBtn.addEventListener('click', () => {
+        if (state.editingCourseId === course.id) {
+          cancelEditCourse();
+        }
         state.loggedCourses = state.loggedCourses.filter(c => c.id !== course.id);
         render();
       });
@@ -737,6 +808,27 @@
     // Default active assignment is the first possible module (or unassigned)
     const defaultAssignment = possibleModuleIds.length > 0 ? possibleModuleIds[0] : '';
 
+    if (state.editingCourseId) {
+      const existing = state.loggedCourses.find(c => c.id === state.editingCourseId);
+      if (existing) {
+        existing.name = name;
+        existing.semester = semester;
+        existing.lp = lp;
+        existing.grade = grade;
+        existing.possibleModuleIds = possibleModuleIds;
+        if (possibleModuleIds.length > 0) {
+          if (!existing.assignedModuleId || !possibleModuleIds.includes(existing.assignedModuleId)) {
+            existing.assignedModuleId = possibleModuleIds[0];
+          }
+        } else {
+          existing.assignedModuleId = '';
+        }
+      }
+      cancelEditCourse();
+      render();
+      return;
+    }
+
     const newCourse = {
       id: `course-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       name: name,
@@ -750,13 +842,7 @@
     state.loggedCourses.push(newCourse);
 
     // Reset form
-    elements.inputCourseName.value = '';
-    elements.inputCourseLp.value = '5';
-    elements.inputCourseGrade.value = '';
-    elements.inputModuleSearch.value = '';
-    state.formPossibleModuleIds = [];
-    renderFormSelectedTags();
-
+    cancelEditCourse();
     render();
   }
 
@@ -1049,6 +1135,11 @@
 
     // Add course form submit
     elements.addCourseForm.addEventListener('submit', handleAddCourse);
+
+    // Cancel edit course button
+    if (elements.btnCancelEditCourse) {
+      elements.btnCancelEditCourse.addEventListener('click', cancelEditCourse);
+    }
 
     // Reset button
     elements.resetBtn.addEventListener('click', () => {

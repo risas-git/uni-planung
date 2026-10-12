@@ -204,9 +204,14 @@
     <!-- TAB 5: LEHRVERANSTALTUNGEN & ZUORDNUNGEN (KURS-MANAGER) -->
     <section id="tab-courses" class="tab-content">
       <!-- Course Logger Card -->
-      <div class="logger-card">
-        <h2 class="logger-title">Neue Lehrveranstaltung erfassen</h2>
-        <p class="logger-desc">
+      <div class="logger-card" id="courseLoggerCard">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <h2 class="logger-title" id="loggerCardTitle">Neue Lehrveranstaltung erfassen</h2>
+          <span id="loggerEditBadge" style="display: none; background: #fef3c7; color: #92400e; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px; border: 1px solid #fde68a;">
+            ✎ Bearbeitungsmodus
+          </span>
+        </div>
+        <p class="logger-desc" id="loggerCardDesc">
           Erfasse besuchte Kurse/Vorlesungen, wähle über die Suche alle Module aus, für die dieser Kurs angerechnet werden kann, und lege ihn an.
         </p>
 
@@ -259,8 +264,9 @@
             </div>
           </div>
 
-          <div style="display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn btn-primary" style="padding: 8px 18px; font-size: 0.875rem;">Veranstaltung anlegen</button>
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button type="button" id="btnCancelEditCourse" class="btn" style="display: none; padding: 8px 16px; font-size: 0.875rem;">Abbrechen</button>
+            <button type="submit" id="btnSubmitCourse" class="btn btn-primary" style="padding: 8px 18px; font-size: 0.875rem;">Veranstaltung anlegen</button>
           </div>
         </form>
       </div>
@@ -287,7 +293,7 @@
                 <th class="col-grade">Note</th>
                 <th>Mögliche Module (Klick zum Aktivieren)</th>
                 <th style="min-width: 240px;">Aktive Zuordnung</th>
-                <th style="width: 80px; text-align: center;">Aktion</th>
+                <th style="width: 140px; text-align: center;">Aktionen</th>
               </tr>
             </thead>
             <tbody id="loggedCoursesTableBody">
