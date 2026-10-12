@@ -212,7 +212,7 @@
                     size="x-small"
                     class="me-1"
                   />
-                  {{ getModuleCode(modId) }} ({{ getModuleLp(modId) }} LP)
+                  {{ getModuleCode(modId) }} ({{ getModuleLp(modId) }} LP, {{ getModuleArea(modId) }})
                 </v-chip>
               </div>
               <span v-else class="text-grey text-caption font-italic">Keine spezifischen Module markiert</span>
@@ -350,6 +350,11 @@ function getModuleCode(modId) {
 function getModuleLp(modId) {
   const m = props.allElectiveModules.find(x => x.id === modId);
   return m ? m.lp : 5;
+}
+
+function getModuleArea(modId) {
+  const m = props.allElectiveModules.find(x => x.id === modId);
+  return m ? m.area : '';
 }
 
 function getAllocationOptions(course) {

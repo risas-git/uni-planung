@@ -149,10 +149,10 @@
               <v-col cols="6" sm="4" md="2">
                 <v-card variant="flat" class="bg-grey-lighten-4 pa-2 pa-sm-3 rounded text-center fill-height">
                   <div class="text-caption font-weight-bold text-grey-darken-1 text-uppercase">Strukt. Erg.</div>
-                  <div class="text-h5 font-weight-bold my-1" :class="stats.seLp >= 30 ? 'text-success' : 'text-primary'">
-                    {{ stats.seLp || 0 }} <span class="text-caption font-weight-normal text-grey">/ 30 LP</span>
+                  <div class="text-h5 font-weight-bold my-1" :class="stats.seLp >= 20 ? 'text-success' : 'text-primary'">
+                    {{ stats.seLp || 0 }} <span class="text-caption font-weight-normal text-grey">/ 20 LP</span>
                   </div>
-                  <div class="text-caption text-grey-darken-1">{{ stats.seLp || 0 }} / 30 LP belegt</div>
+                  <div class="text-caption text-grey-darken-1">{{ stats.seLp || 0 }} / 20 LP belegt</div>
                 </v-card>
               </v-col>
             </v-row>
@@ -190,8 +190,8 @@
 
           <v-tab value="ergaenzung" class="font-weight-bold text-none px-2 px-md-3">
             Strukt. Ergänzung
-            <v-chip size="x-small" class="ms-1 font-weight-bold" variant="tonal" :color="stats.seLp >= 30 ? 'success' : 'primary'">
-              {{ stats.seLp || 0 }}/30
+            <v-chip size="x-small" class="ms-1 font-weight-bold" variant="tonal" :color="stats.seLp >= 20 ? 'success' : 'primary'">
+              {{ stats.seLp || 0 }}/20
             </v-chip>
           </v-tab>
 
@@ -245,7 +245,7 @@
           <v-window-item value="ergaenzung">
             <ElectiveAreaTab
               title="Strukturierte Ergänzung des fw 1-Fach-Ba"
-              :target-lp="30"
+              :target-lp="20"
               description="Profilierungsangebote und Vertiefungstracks (Schwerpunkte 10 LP und Basismodule 5 LP)."
               :modules="curriculum.electives.strukturierteErgaenzung"
               :allocations="stats.moduleAllocations"

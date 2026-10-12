@@ -252,7 +252,7 @@ export const apiService = {
     rows.push(`"Pflichtbereich LP";"${stats.pflichtLp} / 120 LP"`);
     rows.push(`"Wahlpflicht LP";"${stats.wpLp} / 20 LP"`);
     rows.push(`"MiKE LP";"${stats.mikeLp} / 10 LP"`);
-    rows.push(`"Strukturierte Ergaenzung LP";"${stats.seLp} / 30 LP"`);
+    rows.push(`"Strukturierte Ergaenzung LP";"${stats.seLp} / 20 LP"`);
 
     const csvContent = '\uFEFF' + rows.join('\r\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });

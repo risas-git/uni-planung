@@ -300,13 +300,13 @@
     elements.mikeSubtext.textContent = `${stats.mikeLp} / 10 LP belegt`;
 
     elements.seLpText.textContent = stats.seLp;
-    elements.seSubtext.textContent = `${stats.seLp} / 30 LP belegt`;
+    elements.seSubtext.textContent = `${stats.seLp} / 20 LP belegt`;
 
     // Tab badges
     elements.tabBadgePflicht.textContent = `${stats.pflichtLp}/120 LP`;
     elements.tabBadgeWp.textContent = `${stats.wpLp}/20 LP`;
     elements.tabBadgeMike.textContent = `${stats.mikeLp}/10 LP`;
-    elements.tabBadgeSe.textContent = `${stats.seLp}/30 LP`;
+    elements.tabBadgeSe.textContent = `${stats.seLp}/20 LP`;
     elements.tabBadgeCourses.textContent = `${state.loggedCourses.length} Kurse`;
 
     // Area badges
@@ -316,8 +316,8 @@
     elements.areaMikeBadge.textContent = `${stats.mikeLp} / 10 LP belegt`;
     elements.areaMikeBadge.classList.toggle('done', stats.mikeLp >= 10);
 
-    elements.areaSeBadge.textContent = `${stats.seLp} / 30 LP belegt`;
-    elements.areaSeBadge.classList.toggle('done', stats.seLp >= 30);
+    elements.areaSeBadge.textContent = `${stats.seLp} / 20 LP belegt`;
+    elements.areaSeBadge.classList.toggle('done', stats.seLp >= 20);
 
     elements.coursesCountBadge.textContent = `${state.loggedCourses.length} erfasste Veranstaltungen`;
   }
@@ -592,7 +592,7 @@
                     data-course-id="${escapeHtml(course.id)}" 
                     data-module-id="${escapeHtml(m.id)}" 
                     title="${isActive ? 'Aktuell diesem Modul zugeordnet' : 'Klicken, um diesen Kurs hier zuzuordnen'}">
-              ${isActive ? '✓ ' : ''}${escapeHtml(m.code)} (${m.lp} LP, ${escapeHtml(m.type || m.area)})
+              ${isActive ? '✓ ' : ''}${escapeHtml(m.code)} (${m.lp} LP, ${escapeHtml(m.area)})
             </button>
           `;
         }).join('');
@@ -818,7 +818,7 @@
     rows.push(`"Pflichtbereich LP";"${stats.pflichtLp} / 120 LP"`);
     rows.push(`"Wahlpflicht LP";"${stats.wpLp} / 20 LP"`);
     rows.push(`"MiKE LP";"${stats.mikeLp} / 10 LP"`);
-    rows.push(`"Strukturierte Ergaenzung LP";"${stats.seLp} / 30 LP"`);
+    rows.push(`"Strukturierte Ergaenzung LP";"${stats.seLp} / 20 LP"`);
 
     const csvContent = '\uFEFF' + rows.join('\r\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });

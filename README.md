@@ -38,7 +38,7 @@ mvn spring-boot:run
 ## 🛠️ Features
 
 - **Pflichtbereich (120 LP)**: Übersicht nach Fachsemestern (1.–6. Semester) mit Master-Checkboxen („Alle auswählen“) pro Semester und Noteneingabe mit LP-gewichteter Durchschnittsberechnung.
-- **Wahlpflichtbereich (20 LP)**, **MiKE (10 LP)** & **Strukturierte Ergänzung (30 LP)**: Dynamische Modul-Slots für Schwerpunkte (10 LP) und Basismodule (5 LP).
+- **Wahlpflichtbereich (20 LP)**, **MiKE (10 LP)** & **Strukturierte Ergänzung (20 LP)**: Dynamische Modul-Slots für Schwerpunkte (10 LP) und Basismodule (5 LP).
 - **Lehrveranstaltungen & Zuordnungen**:
   - `v-autocomplete` Modulsuche mit Multi-Tag-Auswahl.
   - Fachsemester-Auswahl bis zu 10 Semestern.

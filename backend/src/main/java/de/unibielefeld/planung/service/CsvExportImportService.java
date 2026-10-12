@@ -81,7 +81,7 @@ public class CsvExportImportService {
         sb.append("\"Pflichtbereich LP\";\"").append(stats.getPflichtLp()).append(" / 120 LP\"\r\n");
         sb.append("\"Wahlpflicht LP\";\"").append(stats.getWpLp()).append(" / 20 LP\"\r\n");
         sb.append("\"MiKE LP\";\"").append(stats.getMikeLp()).append(" / 10 LP\"\r\n");
-        sb.append("\"Strukturierte Ergaenzung LP\";\"").append(stats.getSeLp()).append(" / 30 LP\"\r\n");
+        sb.append("\"Strukturierte Ergaenzung LP\";\"").append(stats.getSeLp()).append(" / 20 LP\"\r\n");
 
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
